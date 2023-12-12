@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(cors());
 app.get("/", (req, res) => {
-    res.status(200).json({
+    return res.status(200).json({
         message: "Hello world"
     })
 });

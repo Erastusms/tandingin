@@ -3,7 +3,6 @@ const SignInSignUp = require("../controllers/SignInSignUp");
 const validator = require("../middlewares/validate");
 const { RegisterSchema } = require("../validator/RegisterSchema");
 // const { MulterSingle } = require("../middlewares/multer");
-// const { auth } = require("../middlewares/auth");
 
 ApiRouter.post(
   "/register",
