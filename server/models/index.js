@@ -14,15 +14,18 @@ const db = {};
 // const sequelize = new Sequelize(`${config.url}?sslmode=no-verify`, config)
 
 // setting development environment
-// let sequelize;
-// if (config.use_env_variable) {
-//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   sequelize = new Sequelize(config.database, config.username, config.password, config);
-// }
-const sequelize = new Sequelize(config.database, config.username, config.password, {
-  dialectModule: require('pg')
-});
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+// const sequelize = new Sequelize(config.database, config.username, config.password, {
+//   dialectModule: pg
+// });
+// console.log(config)
+
+// sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 fs
   .readdirSync(__dirname)
