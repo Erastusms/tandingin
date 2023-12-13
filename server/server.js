@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const port = process.env.DB_PORT || 5000;
+const port = process.env.PORT || 5000;
 const cors = require("cors");
 
 app.use(express.urlencoded({ extended: true }));
@@ -31,6 +31,7 @@ app.use((err, req, res, next) => {
     next()
 })
 
-app.listen(port, () => {
-    console.log(`Server is running in port: http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Server is running in port: http://localhost:${port}`);
+// });
+app.listen(port, "0.0.0.0");
