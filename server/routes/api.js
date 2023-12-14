@@ -2,8 +2,7 @@ const ApiRouter = require("express").Router();
 const userController = require("../controllers/UserController");
 const validator = require("../middlewares/validate");
 const { auth } = require("../middlewares/auth");
-const { LoginSchema } = require("../validator/LoginSchema");
-const { RegisterSchema } = require("../validator/RegisterSchema");
+const { RegisterSchema, LoginSchema, UpdateUserSchema } = require("../validator");
 // const { MulterSingle } = require("../middlewares/multer");
 
 ApiRouter.post(
@@ -12,12 +11,13 @@ ApiRouter.post(
   // MulterSingle("./public/images/avatars/"),
   userController.register
 );
-// ApiRouter.get("/auth/google", userController.loginWithGoogle);
-// ApiRouter.get("/auth/google/callback", userController.loginSyncWithGoogle);
+ApiRouter.get("/auth/google", userController.loginWithGoogle);
+ApiRouter.get("/auth/google/callback", userController.loginSyncWithGoogle);
 ApiRouter.post("/login", validator(LoginSchema, 'body'), userController.login);
-ApiRouter.get("/profile", userController.profilePage);
+ApiRouter.get("/profile", auth, userController.profilePage);
 ApiRouter.put(
   "/profile",
+  validator(UpdateUserSchema, 'body'),
   auth,
   // MulterSingle("./public/images/avatars/"),
   userController.updateProfile
