@@ -3,12 +3,11 @@ const { decrypter, encrypter } = require("../helpers/bcrypt");
 const { tokenGenerator } = require("../helpers/jwt");
 const { convertObjectToSnakeCase, convertObjectToCamelCase } = require("../helpers/ResponseHelpers");
 const { successResponse } = require("../response");
-// const { google } = require("googleapis");
+const { google } = require("googleapis");
 // const fs = require("fs-extra");
 // const path = require("path");
 // const randomstring = require("randomstring");
 
-/* nonaktif fitur signin with google sementara
 
 const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -27,7 +26,6 @@ const authorizationUrl = oauth2Client.generateAuthUrl({
     include_granted_scopes: true,
 })
 
-*/
 
 class UserController {
     static async register(req, res) {
@@ -100,79 +98,91 @@ class UserController {
         }
     }
 
-    // nonaktif fitur signin with google sementara
-    // static async loginWithGoogle(req, res) {
-    //     return res.status(200).json({ url: authorizationUrl });
-    // }
 
-    // static async loginSyncWithGoogle(req, res) {
-    //     const { code } = req.query
-    //     // console.log(req.query)
+    static async loginWithGoogle(req, res) {
+        return res.status(200).json({ url: authorizationUrl });
+    }
 
-    //     const { tokens } = await oauth2Client.getToken(code);
+    static async loginSyncWithGoogle(req, res) {
+        const { code } = req.query
+        // console.log(req.query)
 
-    //     oauth2Client.setCredentials(tokens);
+        const { tokens } = await oauth2Client.getToken(code);
 
-    //     const oauth2 = google.oauth2({
-    //         auth: oauth2Client,
-    //         version: 'v2'
-    //     })
-    //     const read = await oauth2.userinfo.get();
+        oauth2Client.setCredentials(tokens);
 
-    //     console.log('read')
-    //     console.log(read)
+        const oauth2 = google.oauth2({
+            auth: oauth2Client,
+            version: 'v2'
+        })
 
-    //     const { data } = await oauth2.userinfo.get();
-    //     console.log('data');
-    //     console.log(data);
-    //     // if (!data.email || !data.name) {
-    //     //     return res.json({
-    //     //         data: data,
-    //     //     })
-    //     // }
+        const { data } = await oauth2.userinfo.get();
+        const { email, name, given_name } = data
 
-    //     // let user = await prisma.users.findUnique({
-    //     //     where: {
-    //     //         email: data.email
-    //     //     }
-    //     // })
+        const isEmailAlreadyExist = await User.findOne({
+            where: { email: email.toLowerCase() },
+        });
 
-    //     // if (!user) {
-    //     //     user = await prisma.users.create({
-    //     //         data: {
-    //     //             name: data.name,
-    //     //             email: data.email,
-    //     //             address: "-"
-    //     //         }
-    //     //     })
-    //     // }
+        if (!isEmailAlreadyExist) {
+            await User.create({
+                fullname: name, username: given_name, email, password: 'not set', role: 'MEMBER'
+            });
+        }
 
-    //     // const payload = {
-    //     //     id: user?.id,
-    //     //     name: user?.name,
-    //     //     address: user?.address
-    //     // }
+        let user = await User.findOne({
+            where: { email },
+        });
 
-    //     // const secret = process.env.JWT_SECRET!;
+        let access_token = tokenGenerator(user);
+        // if (!data.email || !data.name) {
+        //     return res.json({
+        //         data: data,
+        //     })
+        // }
 
-    //     // const expiresIn = 60 * 60 * 1;
+        // let user = await prisma.users.findUnique({
+        //     where: {
+        //         email: data.email
+        //     }
+        // })
 
-    //     // const token = jwt.sign(payload, secret, { expiresIn: expiresIn })
+        // if (!user) {
+        //     user = await prisma.users.create({
+        //         data: {
+        //             name: data.name,
+        //             email: data.email,
+        //             address: "-"
+        //         }
+        //     })
+        // }
 
-    //     // return res.redirect(`http://localhost:3000/auth-success?token=${token}`)
+        // const payload = {
+        //     id: user?.id,
+        //     name: user?.name,
+        //     address: user?.address
+        // }
 
-    //     // return res.json({
-    //     //     data: {
-    //     //         id: user.id,
-    //     //         name: user.name,
-    //     //         address: user.address
-    //     //     },
-    //     //     token: token
-    //     // })
-    //     return res.status(200).json({
-    //         message: "Successfully login!",
-    //     });
-    // }
+        // const secret = process.env.JWT_SECRET!;
+
+        // const expiresIn = 60 * 60 * 1;
+
+        // const token = jwt.sign(payload, secret, { expiresIn: expiresIn })
+
+        // return res.redirect(`http://localhost:3000/auth-success?token=${token}`)
+
+        // return res.json({
+        //     data: {
+        //         id: user.id,
+        //         name: user.name,
+        //         address: user.address
+        //     },
+        //     token: token
+        // })
+        return res.status(200).json({
+            message: "Successfully login!",
+            access_token
+        });
+    }
 
 
     static async profilePage(req, res, next) {
@@ -198,21 +208,25 @@ class UserController {
         //   file = user.avatar;
         // }
 
-        await User.update(
-            {
-                fullname, username, email, password
-                // avatar: file ? file.filename : "blank.png",
-            },
-            { where: { id } }
-        );
+        try {
+            await User.update(
+                {
+                    fullname, username, email, password
+                    // avatar: file ? file.filename : "blank.png",
+                },
+                { where: { id }, individualHooks: true, }
+            );
 
-        const userAfterUpdate = await User.findByPk(id);
+            const userAfterUpdate = await User.findByPk(id);
 
-        return res.status(200).json({
-            status: 200,
-            message: "User data has been updated!",
-            user: userAfterUpdate,
-        });
+            return res.status(200).json({
+                status: 200,
+                message: "User data has been updated!",
+                user: userAfterUpdate,
+            });
+        } catch (err) {
+            next(err)
+        }
     }
 }
 

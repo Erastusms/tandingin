@@ -71,6 +71,9 @@ module.exports = (sequelize, DataTypes) => {
         user.password = encrypter(user.password);
         user.id = uuidv4();
       },
+      beforeUpdate: (user, options) => {
+        user.password = encrypter(user.password);
+      }
     },
     sequelize,
     modelName: 'User',

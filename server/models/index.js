@@ -23,12 +23,6 @@ const sequelize = new Sequelize(process.env.DB_URL_PROD, {
 // } else {
 //   sequelize = new Sequelize(config.database, config.username, config.password, config);
 // }
-// // const sequelize = new Sequelize(config.database, config.username, config.password, {
-//   dialectModule: pg
-// });
-// console.log(config)
-
-// sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 fs
   .readdirSync(__dirname)
