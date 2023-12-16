@@ -2,7 +2,7 @@ const ApiRouter = require("express").Router();
 const userController = require("../controllers/UserController");
 const validator = require("../middlewares/validate");
 const { auth } = require("../middlewares/auth");
-const { RegisterSchema, LoginSchema, UpdateUserSchema } = require("../validator");
+const { RegisterSchema, LoginSchema, UpdateUserSchema } = require("../validator/UserSchema");
 // const { MulterSingle } = require("../middlewares/multer");
 
 ApiRouter.post(

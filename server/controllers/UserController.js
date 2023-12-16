@@ -28,17 +28,12 @@ const authorizationUrl = oauth2Client.generateAuthUrl({
 
 
 class UserController {
-    static async register(req, res) {
+    static async register(req, res, next) {
         try {
             // let file = req.file;
             // const { username, teamName, shortName, role, email, password, reTypePassword } = req.body;
             const { fullname, username, email, password, role } = req.body;
             // shortName max 3 karakter
-            // if (!reTypePassword) {
-            //     return res.status(500).json({
-            //         message: "Retype Password is required!",
-            //     });
-            // }
             const findEmail = await User.findOne({
                 where: { email: email.toLowerCase() },
             });
@@ -54,20 +49,19 @@ class UserController {
             });
             res.status(201).json(successResponse('user successfully created'));
         } catch (err) {
-            console.log(err)
-            res.status(500).json(err);
+            next(err)
         }
     }
-    static async getUser(req, res) {
+    static async getUser(req, res, next) {
         try {
             const data = await User.findAll({})
             res.status(200).json(data);
         } catch (err) {
-            res.status(500).json(err);
+            next(err)
         }
     }
 
-    static async login(req, res) {
+    static async login(req, res, next) {
         try {
             const { email, password } = req.body;
             let user = await User.findOne({
@@ -94,7 +88,7 @@ class UserController {
                 message: "User not found!",
             });
         } catch (err) {
-            res.status(500).json(err);
+            next(err)
         }
     }
 

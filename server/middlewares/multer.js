@@ -5,18 +5,17 @@ const MulterSingle = (dest) => {
   var storage = multer.diskStorage({
     destination: `${dest}`,
     filename: (req, file, cb) => {
-      const { access_token } = req.headers;
-      let name;
+      // const { access_token } = req.headers;
+      // let name;
 
-      if (access_token) {
-        const decoded = tokenVerifier(access_token);
-        name = decoded.name.split(" ");
-        name = name[0];
-      } else {
-        name = "user";
-      }
+      // if (access_token) {
+      //   const decoded = tokenVerifier(access_token);
+      //   name = decoded.username.substr(0,3).toUpperCase()
+      // } else {
+      //   name = "user";
+      // }
 
-      cb(null, name.toLowerCase() + "-" + Date.now() + "-" + file.originalname);
+      cb(null, Date.now() + `-${file.originalname}`);
     },
   });
   var upload = multer({

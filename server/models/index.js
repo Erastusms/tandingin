@@ -10,19 +10,19 @@ const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 // setting production environment
-const sequelize = new Sequelize(process.env.DB_URL_PROD, {
-  define: {
-    timestamp: false
-  }
-})
+// const sequelize = new Sequelize(process.env.DB_URL_PROD, {
+//   define: {
+//     timestamp: false
+//   }
+// })
 
 // setting development environment
-// let sequelize;
-// if (config.use_env_variable) {
-//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   sequelize = new Sequelize(config.database, config.username, config.password, config);
-// }
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
 fs
   .readdirSync(__dirname)

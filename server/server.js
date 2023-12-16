@@ -1,13 +1,29 @@
 require("dotenv").config();
 const express = require("express");
+const formData = require("express-form-data");
 const app = express();
+const os = require("os");
 const port = process.env.PORT || 5000;
 const cors = require("cors");
+const path = require("path");
+const options = {
+    uploadDir: os.tmpdir(),
+    autoClean: true
+};
 
+// parse data with connect-multiparty. 
+app.use(formData.parse(options));
+// union the body and the files
+app.use(formData.union());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static("public"));
+// app.use(express.json());
 app.use(cors());
+app.use(
+    "/assets/images",
+    express.static(path.join(__dirname, "/assets/images"))
+);
+app.use(express.static("public"));
+
 app.get("/", (req, res) => {
     return res.status(200).json({
         message: "Hello world"

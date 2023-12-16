@@ -6,7 +6,7 @@ const adminAuth = (req, res, next) => {
   try {
     if (access_token) {
       const decoded = tokenVerifier(access_token);
-      if (decoded.type === "admin") {
+      if (decoded.role.toLowerCase() === "admin") {
         req.userData = decoded;
         next();
       } else {
