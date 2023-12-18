@@ -1,9 +1,9 @@
 module.exports = {
-  successResponse(responseMessage, data = undefined) {
-    return {
+  successResponse(res, statusCode, responseMessage, data = undefined) {
+    return res.status(statusCode).json({
       status: 'success',
       message: responseMessage,
       data,
-    };
+    });
   },
 };

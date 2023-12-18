@@ -19,6 +19,9 @@ module.exports = {
       logo: {
         type: Sequelize.STRING
       },
+      status: {
+        type: Sequelize.STRING
+      },
       LeagueId: {
         type: Sequelize.UUID
       },
