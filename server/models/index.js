@@ -18,8 +18,13 @@ const db = {};
 
 // setting development environment
 let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+if (env = 'production') {
+  // sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  sequelize = new Sequelize(process.env.DB_URL_PROD, {
+    define: {
+      timestamp: false
+    }
+  })
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
