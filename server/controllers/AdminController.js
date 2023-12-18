@@ -1,4 +1,4 @@
-const { League, User } = require('../models');
+const { League, User, Team } = require('../models');
 const {
     convertObjectToSnakeCase,
     convertObjectToCamelCase,
@@ -32,13 +32,13 @@ class AdminController {
             await League.create({
                 ...dataConvert,
                 logo: file ? file.filename : "blank.png",
-                status: 'active',
+                status: 'open',
                 createdBy: users.username,
                 updatedBy: users.username,
                 UserId: users.id
             })
 
-            return res.status(201).json(successResponse('League successfully created'));
+            return successResponse(res, 201, 'League successfully created');
         } catch (err) {
             next(err);
         }
@@ -86,7 +86,9 @@ class AdminController {
 
     static async viewListLeague(req, res, next) {
         try {
-            const leagues = await League.findAll({})
+            const leagues = await League.findAll({
+                include: [Team]
+            })
             return res.status(200).json(leagues);
         } catch (err) {
             next(err)

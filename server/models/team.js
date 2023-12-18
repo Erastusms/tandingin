@@ -13,12 +13,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Team.belongsTo(models.League);
     }
   }
   Team.init({
     name: DataTypes.STRING,
     shortname: DataTypes.STRING,
     logo: DataTypes.STRING,
+    status: DataTypes.STRING,
     LeagueId: DataTypes.UUID
   }, {
     hooks: {
