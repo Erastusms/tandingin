@@ -1,36 +1,40 @@
-const AdminRouter = require("express").Router();
-const adminController = require("../controllers/AdminController");
-const validator = require("../middlewares/validate");
-const { adminAuth } = require("../middlewares/auth");
-const { CreateSchema } = require("../validator/LeagueSchema");
-const { MulterSingle } = require("../middlewares/multer");
+const AdminRouter = require('express').Router();
+const adminController = require('../controllers/AdminController');
+const validator = require('../middlewares/validate');
+const { adminAuth, checkAuth } = require('../middlewares/auth');
+const { CreateSchema, ApprovalSchema, ListSchema  } = require('../validator/LeagueSchema');
+const { MulterSingle } = require('../middlewares/multer');
 
 AdminRouter.post(
-  "/league",
+  '/league',
   validator(CreateSchema, 'body'),
   adminAuth,
-  MulterSingle("./public/league/images/"),
+  MulterSingle('./public/images/league'),
   adminController.create
 );
 AdminRouter.put(
-  "/league/:leagueId",
+  '/league/:leagueId',
   validator(CreateSchema, 'body'),
   adminAuth,
   adminController.update
 );
 AdminRouter.put(
-  "/league/logo/:leagueId",
+  '/league/logo/:leagueId',
   adminAuth,
-  MulterSingle("./public/league/images/"),
+  MulterSingle('./public/images/league'),
   adminController.updateLogo
 );
-AdminRouter.get('/league/list', adminController.viewListLeague)
-// AdminRouter.get("/auth/google", adminController.loginWithGoogle);
-// AdminRouter.get("/auth/google/callback", adminController.loginSyncWithGoogle);
-// AdminRouter.post("/login", validator(LoginSchema, 'body'), adminController.login);
-// AdminRouter.get("/profile", auth, adminController.profilePage);
-
-
-// AdminRouter.get("/get", userController.getUser);
+AdminRouter.get('/league/list/all', adminController.viewListLeague);
+AdminRouter.get(
+  '/league/list',
+  validator(ListSchema, 'query'),
+  adminController.viewListTeamInLeague
+);
+AdminRouter.put(
+  '/league/approval/status',
+  checkAuth('admin'),
+  validator(ApprovalSchema, 'body'),
+  adminController.updateStatus
+);
 
 module.exports = AdminRouter;

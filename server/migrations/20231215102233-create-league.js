@@ -16,6 +16,9 @@ module.exports = {
       quota: {
         type: Sequelize.INTEGER
       },
+      quota_available: {
+        type: Sequelize.INTEGER
+      },
       description: {
         type: Sequelize.STRING
       },
@@ -32,6 +35,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       logo: {
+        type: Sequelize.STRING
+      },
+      is_locked: {
+        type: Sequelize.BOOLEAN,
+      },
+      key: {
         type: Sequelize.STRING
       },
       UserId: {

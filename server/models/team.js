@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Team.belongsTo(models.League);
+      Team.belongsTo(models.User);
     }
   }
   Team.init({
@@ -21,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     shortname: DataTypes.STRING,
     logo: DataTypes.STRING,
     status: DataTypes.STRING,
+    UserId: DataTypes.UUID,
     LeagueId: DataTypes.UUID
   }, {
     hooks: {

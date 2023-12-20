@@ -6,6 +6,12 @@ const CreateSchema = Joi.object({
     description: Joi.string().required(),
     startDate: Joi.date().required(),
     endDate: Joi.date().min(Joi.ref('startDate')).required(),
+    isLocked: Joi.boolean().required(),
+    key: Joi.when('isLocked', {
+        is: true,
+        then: Joi.string().required(),
+        otherwise: Joi.string().optional(),
+    }),
     prize: Joi.string().required(),
 });
 

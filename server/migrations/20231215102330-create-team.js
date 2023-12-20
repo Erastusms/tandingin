@@ -22,6 +22,9 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
+      UserId: {
+        type: Sequelize.UUID
+      },
       LeagueId: {
         type: Sequelize.UUID
       },
