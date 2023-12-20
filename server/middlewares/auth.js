@@ -1,6 +1,6 @@
 const { tokenVerifier } = require("../helpers/jwt");
 
-const memberAuth = (role) => {
+const checkAuth = (role) => {
   return (req, res, next) => {
     const { access_token } = req.headers;
     try {
@@ -80,4 +80,4 @@ const auth = (req, res, next) => {
   }
 };
 
-module.exports = { adminAuth, auth, memberAuth };
+module.exports = { adminAuth, auth, checkAuth };

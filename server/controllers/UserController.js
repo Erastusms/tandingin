@@ -146,7 +146,7 @@ class UserController {
     //     },
     //     token: token
     // })
-    return successResponse(res, 200, 'Successfully login!', {
+    return successResponse(res, 'Successfully login!', {
         access_token: tokenGenerator(user),
         role: user.role
     }) 
@@ -178,10 +178,11 @@ class UserController {
     try {
       await User.update(
         {
-          fullname,
-          username,
-          email,
-          password,
+          // fullname,
+          // username,
+          // email,
+          // password,
+          ...req.body
           // avatar: file ? file.filename : "blank.png",
         },
         { where: { id }, individualHooks: true }

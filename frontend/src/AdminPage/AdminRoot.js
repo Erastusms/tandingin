@@ -1,14 +1,14 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import AppNavigation from '../components/AppNavigation'
+import Sidenav from './Sidenav'
 
-function AppRoot() {
+function AdminRoot() {
   return (
     <>
-
+    <Sidenav/>
     <Outlet/>
     </>
   )
 }
 
-export default AppRoot
+export default AdminRoot
