@@ -37,11 +37,11 @@ AdminRouter.put(
   validator(ApprovalSchema, 'body'),
   adminController.updateStatus
 );
-// AdminRouter.get(
-//   '/league/match/generate/:leagueId',
-//   checkAuth('admin'),
-//   // validator(ApprovalSchema, 'body'),
-//   adminController.updateStatus
-// );
+AdminRouter.get(
+  '/league/match/generate/:leagueId',
+  checkAuth('admin'),
+  // validator(ApprovalSchema, 'body'),
+  adminController.generateMatch
+);
 
 module.exports = AdminRouter;

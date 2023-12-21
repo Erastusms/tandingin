@@ -35,7 +35,7 @@ class UserController {
         password,
         role,
       });
-      return successResponse(res, 201, 'user successfully created');
+      return successResponse(res, 'user successfully created', 201 );
     } catch (err) {
       next(err);
     }
@@ -59,7 +59,7 @@ class UserController {
 
       if (user) {
         if (decrypter(password, user.password)) {
-          return successResponse(res, 200, 'You are successfully logged in', {
+          return successResponse(res, 'You are successfully logged in', 200, {
             access_token: tokenGenerator(user),
             role: user.role
           });

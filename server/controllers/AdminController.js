@@ -4,7 +4,6 @@ const {
   convertObjectToCamelCase,
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
-const { MulterSingle } = require('../middlewares/multer');
 // const fs = require("fs-extra");
 // const path = require("path");
 
@@ -54,13 +53,13 @@ class AdminController {
     console.log(name)
     try {
       const dataConvert = convertObjectToSnakeCase(req.body);
-      // await League.update(
-      //   {
-      //     ...dataConvert,
-      //     // logo: file ? file.filename : "blank.png",
-      //   },
-      //   { where: { id: LeagueId } }
-      // );
+      await League.update(
+        {
+          ...dataConvert,
+          // logo: file ? file.filename : "blank.png",
+        },
+        { where: { id: LeagueId } }
+      );
 
       return successResponse(res, 'League successfully updated');
     } catch (err) {
@@ -185,6 +184,7 @@ class AdminController {
     }
   }
 
+  // blm dikerjain
   static async generateMatch(req, res, next) {
     try {
       const LeagueId = req.params.leagueId;
