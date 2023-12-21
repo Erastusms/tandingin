@@ -4,6 +4,7 @@ const {
   convertObjectToCamelCase,
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
+const { MulterSingle } = require('../middlewares/multer');
 // const fs = require("fs-extra");
 // const path = require("path");
 
@@ -46,18 +47,20 @@ class AdminController {
   static async update(req, res, next) {
     // const UserId = req.userData.id;
     const LeagueId = req.params.leagueId;
-    const file = req.file;
+    // const file = req.file;
+    // console.log(file)
     // const users = await User.findByPk({ id: UserId });
     const { name, quota, description, startDate, endDate, prize } = req.body;
+    console.log(name)
     try {
       const dataConvert = convertObjectToSnakeCase(req.body);
-      await League.update(
-        {
-          ...dataConvert,
-          // logo: file ? file.filename : "blank.png",
-        },
-        { where: { id: LeagueId } }
-      );
+      // await League.update(
+      //   {
+      //     ...dataConvert,
+      //     // logo: file ? file.filename : "blank.png",
+      //   },
+      //   { where: { id: LeagueId } }
+      // );
 
       return successResponse(res, 'League successfully updated');
     } catch (err) {
@@ -68,6 +71,7 @@ class AdminController {
   static async updateLogo(req, res, next) {
     const LeagueId = req.params.leagueId;
     const file = req.file;
+
     try {
       await League.update(
         {
@@ -154,6 +158,16 @@ class AdminController {
             },
             { where: { id: LeagueId } }
           );
+
+          const leagueAfterDecrement = await League.findOne({ where: { id: LeagueId } });
+          if (leagueAfterDecrement.quota_available === 0) {
+            await League.update(
+              {
+                status: 'closed',
+              },
+              { where: { id: LeagueId } }
+            );
+          }
           break;
         case 'Rejected':
           await Team.update(
@@ -166,6 +180,17 @@ class AdminController {
       }
 
       return successResponse(res, `${status} by ADMIN League`);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async generateMatch(req, res, next) {
+    try {
+      const LeagueId = req.params.leagueId;
+      const allTeams = await Team.findAll({ where: { LeagueId } })
+
+      return successResponse(res, 'List Teams Show', 200, allTeams);
     } catch (err) {
       next(err);
     }
