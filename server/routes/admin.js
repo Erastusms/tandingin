@@ -1,26 +1,26 @@
 const AdminRouter = require('express').Router();
 const adminController = require('../controllers/AdminController');
 const validator = require('../middlewares/validate');
-const { adminAuth, checkAuth } = require('../middlewares/auth');
+const { checkAuth } = require('../middlewares/auth');
 const { CreateSchema, ApprovalSchema, ListSchema  } = require('../validator/LeagueSchema');
 const { MulterSingle } = require('../middlewares/multer');
 
 AdminRouter.post(
   '/league',
   validator(CreateSchema, 'body'),
-  adminAuth,
+  checkAuth('admin'),
   MulterSingle('./public/images/league'),
   adminController.create
 );
 AdminRouter.put(
   '/league/:leagueId',
   validator(CreateSchema, 'body'),
-  adminAuth,
+  checkAuth('admin'),
   adminController.update
 );
 AdminRouter.put(
   '/league/logo/:leagueId',
-  adminAuth,
+  checkAuth('admin'),
   MulterSingle('./public/images/league'),
   adminController.updateLogo
 );
