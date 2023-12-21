@@ -4,7 +4,7 @@ const validator = require('../middlewares/validate');
 const { checkAuth } = require('../middlewares/auth');
 const { CreateSchema, ApprovalSchema, ListSchema  } = require('../validator/LeagueSchema');
 const { MulterSingle } = require('../middlewares/multer');
-
+// const upload = multer({ dest: 'uploads/' })
 AdminRouter.post(
   '/league',
   validator(CreateSchema, 'body'),
@@ -14,14 +14,15 @@ AdminRouter.post(
 );
 AdminRouter.put(
   '/league/:leagueId',
-  validator(CreateSchema, 'body'),
+  MulterSingle('./public/images/league'),
   checkAuth('admin'),
+  validator(CreateSchema, 'body'),
   adminController.update
 );
 AdminRouter.put(
   '/league/logo/:leagueId',
-  checkAuth('admin'),
   MulterSingle('./public/images/league'),
+  checkAuth('admin'),
   adminController.updateLogo
 );
 AdminRouter.get('/league/list/all', adminController.viewListLeague);
@@ -36,5 +37,11 @@ AdminRouter.put(
   validator(ApprovalSchema, 'body'),
   adminController.updateStatus
 );
+// AdminRouter.get(
+//   '/league/match/generate/:leagueId',
+//   checkAuth('admin'),
+//   // validator(ApprovalSchema, 'body'),
+//   adminController.updateStatus
+// );
 
 module.exports = AdminRouter;

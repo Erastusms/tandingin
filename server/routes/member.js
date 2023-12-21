@@ -7,9 +7,9 @@ const { MulterSingle } = require("../middlewares/multer");
 
 MemberRouter.post(
   "/team",
-  validator(CreateSchema, 'body'),
-  checkAuth('member'),
   MulterSingle("./public/images/team/"),
+  checkAuth('member'),
+  validator(CreateSchema, 'body'),
   memberController.create
 );
 
