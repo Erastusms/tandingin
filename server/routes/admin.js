@@ -40,7 +40,6 @@ AdminRouter.put(
 AdminRouter.get(
   '/league/match/generate/:leagueId',
   checkAuth('admin'),
-  // validator(ApprovalSchema, 'body'),
   adminController.generateMatch
 );
 

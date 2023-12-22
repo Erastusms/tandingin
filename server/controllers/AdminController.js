@@ -1,12 +1,13 @@
-const { League, User, Team } = require('../models');
+const { League, User, Team, Fixture } = require('../models');
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
+const { generateRandomFixture, generateFixture } = require('../helpers/fixtureGenerator');
 // const fs = require("fs-extra");
 // const path = require("path");
-
+const robin = require('roundrobin');
 class AdminController {
   static async create(req, res, next) {
     try {
@@ -184,13 +185,22 @@ class AdminController {
     }
   }
 
-  // blm dikerjain
   static async generateMatch(req, res, next) {
     try {
       const LeagueId = req.params.leagueId;
       const allTeams = await Team.findAll({ where: { LeagueId } })
-
-      return successResponse(res, 'List Teams Show', 200, allTeams);
+      const isMatchExist = await Fixture.findAll({ where: { LeagueId } })
+      if (isMatchExist.length > 0) {
+        await Fixture.destroy({
+          where: { LeagueId },
+        });
+      }
+      const teamsName = allTeams.map(team => team.name)
+      const shuffleTeams = teamsName.sort(() => Math.random() - 0.5);
+      const turnament = robin(shuffleTeams.length, shuffleTeams);
+      const matchAllTeam = generateFixture(turnament, LeagueId);
+      await Fixture.bulkCreate(matchAllTeam)
+      return successResponse(res, 'Generate fixture success', 200, matchAllTeam);
     } catch (err) {
       next(err);
     }
