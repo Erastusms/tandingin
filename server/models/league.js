@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       League.belongsTo(models.User);
       League.hasMany(models.Team);
+      League.hasMany(models.Fixture);
     }
   }
   League.init({
