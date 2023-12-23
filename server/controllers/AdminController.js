@@ -1,3 +1,4 @@
+const robin = require('roundrobin');
 const { League, User, Team, Fixture } = require('../models');
 const {
   convertObjectToSnakeCase,
@@ -5,9 +6,7 @@ const {
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
 const { generateRandomFixture, generateFixture } = require('../helpers/fixtureGenerator');
-// const fs = require("fs-extra");
-// const path = require("path");
-const robin = require('roundrobin');
+
 class AdminController {
   static async create(req, res, next) {
     try {
@@ -188,19 +187,52 @@ class AdminController {
   static async generateMatch(req, res, next) {
     try {
       const LeagueId = req.params.leagueId;
-      const allTeams = await Team.findAll({ where: { LeagueId } })
       const isMatchExist = await Fixture.findAll({ where: { LeagueId } })
       if (isMatchExist.length > 0) {
         await Fixture.destroy({
           where: { LeagueId },
         });
       }
+      const allTeams = await Team.findAll({ where: { LeagueId } })
       const teamsName = allTeams.map(team => team.name)
       const shuffleTeams = teamsName.sort(() => Math.random() - 0.5);
       const turnament = robin(shuffleTeams.length, shuffleTeams);
       const matchAllTeam = generateFixture(turnament, LeagueId);
       await Fixture.bulkCreate(matchAllTeam)
       return successResponse(res, 'Generate fixture success', 200, matchAllTeam);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async viewMatchInLeague(req, res, next) {
+    const LeagueId = req.params.leagueId;
+    try {
+      const fixturesData = await Fixture.findAll({ where: { LeagueId } })
+      return successResponse(res, 'Show all fixtures', 200, fixturesData);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateScore(req, res, next) {
+    const UserId = req.userData.id;
+    const LeagueId = req.params.leagueId;
+    const { fixturesId, teamAScore, teamBScore } = req.body
+    try {
+      const isUserIdAuthorized = await League.findOne({ where: { UserId } })
+      if (!isUserIdAuthorized) {
+        return res.status(401).json({ message: "You are not authorized!" })
+      }
+      await Fixture.update(
+        {
+          teamA_score: teamAScore,
+          teamB_score: teamBScore,
+          status: 'FullTime'
+        },
+        { where: { id: fixturesId, LeagueId } }
+      );
+      return successResponse(res, 'Score has been updated');
     } catch (err) {
       next(err);
     }
