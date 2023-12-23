@@ -214,6 +214,29 @@ class AdminController {
       next(err);
     }
   }
+
+  static async updateScore(req, res, next) {
+    const UserId = req.userData.id;
+    const LeagueId = req.params.leagueId;
+    const { fixturesId, teamAScore, teamBScore } = req.body
+    try {
+      const isUserIdAuthorized = await League.findOne({ where: { UserId } })
+      if (!isUserIdAuthorized) {
+        return res.status(401).json({ message: "You are not authorized!" })
+      }
+      await Fixture.update(
+        {
+          teamA_score: teamAScore,
+          teamB_score: teamBScore,
+          status: 'FullTime'
+        },
+        { where: { id: fixturesId, LeagueId } }
+      );
+      return successResponse(res, 'Score has been updated');
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = AdminController;
