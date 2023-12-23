@@ -2,7 +2,7 @@ const AdminRouter = require('express').Router();
 const adminController = require('../controllers/AdminController');
 const validator = require('../middlewares/validate');
 const { checkAuth } = require('../middlewares/auth');
-const { CreateSchema, ApprovalSchema, ListSchema  } = require('../validator/LeagueSchema');
+const { CreateSchema, ApprovalSchema, ListSchema } = require('../validator/LeagueSchema');
 const { MulterSingle } = require('../middlewares/multer');
 // const upload = multer({ dest: 'uploads/' })
 AdminRouter.post(
@@ -41,6 +41,10 @@ AdminRouter.get(
   '/league/match/generate/:leagueId',
   checkAuth('admin'),
   adminController.generateMatch
+);
+AdminRouter.get(
+  '/league/match/show/:leagueId',
+  adminController.viewMatchInLeague
 );
 
 module.exports = AdminRouter;
