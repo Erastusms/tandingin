@@ -20,4 +20,10 @@ MemberRouter.post(
   memberController.joinLeague
 );
 
+MemberRouter.get(
+  "/team/match/show/:teamId",
+  checkAuth('member'),
+  memberController.viewMatch
+);
+
 module.exports = MemberRouter;
