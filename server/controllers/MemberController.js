@@ -1,4 +1,4 @@
-const { League, User, Team } = require('../models');
+const { League, User, Team, Fixture } = require('../models');
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
@@ -32,7 +32,7 @@ class MemberController {
       const teamData = await Team.findOne({
         where: { id: TeamId },
       });
-      
+
       if (teamData.LeagueId) {
         return res.status(403).json({
           message: 'This team are joining another league!',
@@ -78,6 +78,35 @@ class MemberController {
       );
 
       return successResponse(res, 'waiting approval from admin league');
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async viewMatch(req, res, next) {
+    // const TeamId = req.params.teamId;
+    const TeamName = req.params.teamId;
+    try {
+      const matchTeam = await Fixture.findAll({ where: { teamA: TeamName } })
+      const match2Team = await Fixture.findAll({ where: { teamB: TeamName } })
+      const dataMatch = matchTeam.map((match) => {
+        return {
+          id: match.id,
+          name: match.name,
+          home: match.teamA,
+          away: match.teamB,
+        }
+      })
+      const dataMatch2 = match2Team.map((match) => {
+        return {
+          id: match.id,
+          name: match.name,
+          home: match.teamA,
+          away: match.teamB,
+        }
+      })
+      const allData = dataMatch.concat(dataMatch2)
+      return successResponse(res, 'Show Match', 200, allData);
     } catch (err) {
       next(err);
     }

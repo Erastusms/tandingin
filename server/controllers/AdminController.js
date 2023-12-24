@@ -5,7 +5,7 @@ const {
   convertObjectToCamelCase,
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
-const { generateRandomFixture, generateFixture } = require('../helpers/fixtureGenerator');
+const { generateFixture } = require('../helpers/fixtureGenerator');
 
 class AdminController {
   static async create(req, res, next) {
