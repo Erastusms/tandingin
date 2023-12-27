@@ -1,4 +1,5 @@
-const { User } = require('../models');
+const { Op } = require("sequelize");
+const { User, League, Team } = require('../models');
 const { decrypter, encrypter } = require('../helpers/bcrypt');
 const { tokenGenerator } = require('../helpers/jwt');
 const {
@@ -35,7 +36,7 @@ class UserController {
         password,
         role,
       });
-      return successResponse(res, 'user successfully created', 201 );
+      return successResponse(res, 'user successfully created', 201);
     } catch (err) {
       next(err);
     }
@@ -147,9 +148,9 @@ class UserController {
     //     token: token
     // })
     return successResponse(res, 'Successfully login!', {
-        access_token: tokenGenerator(user),
-        role: user.role
-    }) 
+      access_token: tokenGenerator(user),
+      role: user.role
+    })
   }
 
   static async profilePage(req, res, next) {
@@ -158,7 +159,6 @@ class UserController {
       let users = await User.findByPk(id);
       return res.status(200).json(users);
     } catch (err) {
-      // res.status(500).json(err);
       next(err);
     }
   }
@@ -195,6 +195,35 @@ class UserController {
         message: 'User data has been updated!',
         user: userAfterUpdate,
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async search(req, res, next) {
+    const { query } = req.query
+    try {
+      const dataLeague = await League.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `%${query}%`
+          }
+        }
+      })
+
+      const dataTeam = await Team.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `%${query}%`
+          }
+        }
+      })
+
+      return successResponse(res, 'Show Data', 200, {
+        League: dataLeague.map(data => convertObjectToCamelCase(data.dataValues)),
+        Team: dataTeam.map(data => convertObjectToCamelCase(data.dataValues))
+      })
+
     } catch (err) {
       next(err);
     }
