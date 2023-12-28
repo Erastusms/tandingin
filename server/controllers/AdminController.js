@@ -87,14 +87,6 @@ class AdminController {
 
   static async viewListLeague(req, res, next) {
     try {
-      // const leagues = await League.findAll({
-      //     include: [{
-      //         model: Team,
-      //         where: {
-      //             status: 'Approved'
-      //         }
-      //     }]
-      // })
       const leagues = await League.findAll({});
       return res.status(200).json(leagues);
     } catch (err) {

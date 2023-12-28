@@ -84,7 +84,6 @@ class MemberController {
   }
 
   static async viewMatch(req, res, next) {
-    // const TeamId = req.params.teamId;
     const TeamName = req.params.teamId;
     try {
       const matchTeam = await Fixture.findAll({ where: { teamA: TeamName } })

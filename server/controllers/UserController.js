@@ -15,12 +15,8 @@ const { authorizationUrl, getSyncGoogle } = require('../helpers/GoogleHelpers');
 class UserController {
   static async register(req, res, next) {
     try {
-      // let file = req.file;
-      // const { username, teamName, shortName, role, email, password, reTypePassword } = req.body;
-      const { fullname, username, email, password, role } = req.body;
-      // shortName max 3 karakter
       const findEmail = await User.findOne({
-        where: { email: email.toLowerCase() },
+        where: { email: req.body.email.toLowerCase() },
       });
 
       if (findEmail) {
@@ -30,11 +26,7 @@ class UserController {
       }
 
       await User.create({
-        fullname,
-        username,
-        email,
-        password,
-        role,
+        ...req.body
       });
       return successResponse(res, 'user successfully created', 201);
     } catch (err) {
@@ -165,8 +157,6 @@ class UserController {
 
   static async updateProfile(req, res) {
     const id = req.userData.id;
-    const file = req.file;
-    const { fullname, username, email, password } = req.body;
 
     // if (file) {
     //   file = file.filename;
@@ -178,12 +168,7 @@ class UserController {
     try {
       await User.update(
         {
-          // fullname,
-          // username,
-          // email,
-          // password,
           ...req.body
-          // avatar: file ? file.filename : "blank.png",
         },
         { where: { id }, individualHooks: true }
       );
