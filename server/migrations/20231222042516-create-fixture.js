@@ -11,23 +11,18 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
-      teamA: {
-        type: Sequelize.STRING
-      },
-      teamA_score: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      teamB: {
-        type: Sequelize.STRING
-      },
-      teamB_score: {
+      score: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
       status: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: Sequelize.STRING
+      },
+      category: {
+        type: Sequelize.STRING
+      },
+      TeamId: {
+        type: Sequelize.UUID
       },
       LeagueId: {
         type: Sequelize.UUID

@@ -12,17 +12,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Fixture.hasMany(models.Team);
       Fixture.belongsTo(models.League);
     }
   }
   Fixture.init({
     name: DataTypes.STRING,
-    teamA: DataTypes.STRING,
-    teamA_score: DataTypes.INTEGER,
-    teamB: DataTypes.STRING,
-    teamB_score: DataTypes.INTEGER,
+    score: DataTypes.INTEGER,
     status: DataTypes.STRING,
-    LeagueId: DataTypes.UUID
+    category: DataTypes.STRING,
+    TeamId: DataTypes.UUID,
+    LeagueId: DataTypes.UUID,
   }, {
     sequelize,
     modelName: 'Fixture',

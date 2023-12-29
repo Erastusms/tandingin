@@ -13,16 +13,17 @@
     },
     {
         "name": "Chelsea",
-        "shortname": "CHE"
+        "shortname": "CHE",
+        "LeagueId": "4cf8ec16-a6e2-4efc-83c6-2393ba2f2e27"
     },
     {
         "name": "Persik",
         "shortname": "PSK",
-        "LeagueId": "4107b0d0-7a91-4e74-afea-ebb973955a42"
+        "LeagueId": "4cf8ec16-a6e2-4efc-83c6-2393ba2f2e27"
     },
     {
         "name": "Persija",
         "shortname": "PSJ",
-        "LeagueId": "4107b0d0-7a91-4e74-afea-ebb973955a42"
+        "LeagueId": "4cf8ec16-a6e2-4efc-83c6-2393ba2f2e27"
     }
 ]

@@ -22,11 +22,15 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
+      FixtureId: {
+        type: Sequelize.INTEGER
+      },
       UserId: {
         type: Sequelize.UUID
       },
       LeagueId: {
-        type: Sequelize.UUID
+        type: Sequelize.UUID,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

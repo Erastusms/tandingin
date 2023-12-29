@@ -23,10 +23,10 @@ module.exports = {
       return {
         id: uuidv4(),
         ...team,
-        status: 'Waiting Approval',
-        logo: 'blank.png',
-        LeagueId: LeagueId ?? '13adc6f9-12b7-49e3-b2ab-68ae5ca256fe',
-        owner: '851487d7-63de-42b2-a9f5-8ab55cb1ea4f',
+        status: 'Approved',
+        logo: 'ImageNotSet.png',
+        LeagueId: LeagueId ?? '29272733-8593-4290-b88c-e0b232081b36',
+        UserId: '851487d7-63de-42b2-a9f5-8ab55cb1ea4f',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
