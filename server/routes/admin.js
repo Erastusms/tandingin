@@ -10,7 +10,7 @@ AdminRouter.post(
   validator(CreateSchema, 'body'),
   checkAuth('admin'),
   MulterSingle('./public/images/league'),
-  adminController.create
+  adminController.createLeague
 );
 AdminRouter.put(
   '/league/:leagueId',

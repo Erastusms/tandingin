@@ -8,7 +8,7 @@ const { successResponse } = require('../response');
 const { generateFixture } = require('../helpers/fixtureGenerator');
 
 class AdminController {
-  static async create(req, res, next) {
+  static async createLeague(req, res, next) {
     try {
       let file = req.file;
       const id = req.userData.id;
@@ -186,10 +186,11 @@ class AdminController {
         });
       }
       const allTeams = await Team.findAll({ where: { LeagueId } })
-      const teamsName = allTeams.map(team => team.name)
+      const teamsName = allTeams.map(team => team.id)
       const shuffleTeams = teamsName.sort(() => Math.random() - 0.5);
       const turnament = robin(shuffleTeams.length, shuffleTeams);
       const matchAllTeam = generateFixture(turnament, LeagueId);
+      // console.log(matchAllTeam);
       await Fixture.bulkCreate(matchAllTeam)
       return successResponse(res, 'Generate fixture success', 200, matchAllTeam);
     } catch (err) {
