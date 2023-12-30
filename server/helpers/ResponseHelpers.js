@@ -43,15 +43,6 @@ const keyObjectSubtitution = (obj) => {
 };
 
 const convertObjectToSnakeCase = (obj) => {
-  // if (typeof(obj) != "object") return obj;
-  // newObject = {};
-
-  // const camelToUnderscore = (key) => key.replace(/([A-Z])/g, "_$1").toLowerCase();
-
-  // for (const camel in obj) {
-  //   newObject[camelToUnderscore(camel)] = obj[camel];
-  // }
-  // return newObject
   return _.mapKeys(obj, (v, k) => _.snakeCase(k))
 
 }
@@ -60,6 +51,10 @@ const convertObjectToCamelCase = (obj) => {
   return _.mapKeys(obj, (v, k) => _.camelCase(k))
 }
 
+const getUniqueList = (arr, key) => {
+  return [...new Map(arr.map(item => [item[key], item])).values()]
+}
+
 module.exports = {
-  keyObjectSubtitution, convertObjectToSnakeCase, convertObjectToCamelCase
+  keyObjectSubtitution, convertObjectToSnakeCase, convertObjectToCamelCase, getUniqueList
 };
