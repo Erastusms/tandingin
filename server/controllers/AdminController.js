@@ -1,11 +1,13 @@
 const robin = require('roundrobin');
-const { League, User, Team, Fixture } = require('../models');
+const _ = require("lodash");
+const { League, User, Team, Fixture, Match } = require('../models');
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
+  getUniqueList,
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
-const { generateFixture } = require('../helpers/fixtureGenerator');
+const { generateFixture, generateMatchDay } = require('../helpers/fixtureGenerator');
 
 class AdminController {
   static async createLeague(req, res, next) {
@@ -179,6 +181,7 @@ class AdminController {
   static async generateMatch(req, res, next) {
     try {
       const LeagueId = req.params.leagueId;
+      console.log('masuk generate match');
       const isMatchExist = await Fixture.findAll({ where: { LeagueId } })
       if (isMatchExist.length > 0) {
         await Fixture.destroy({
@@ -190,9 +193,15 @@ class AdminController {
       const shuffleTeams = teamsName.sort(() => Math.random() - 0.5);
       const turnament = robin(shuffleTeams.length, shuffleTeams);
       const matchAllTeam = generateFixture(turnament, LeagueId);
-      // console.log(matchAllTeam);
-      await Fixture.bulkCreate(matchAllTeam)
-      return successResponse(res, 'Generate fixture success', 200, matchAllTeam);
+
+      const fixtureData = getUniqueList(matchAllTeam, 'name')
+      const fixtures = await Fixture.bulkCreate(fixtureData)
+      console.log(fixtures.map(fixture => fixture.id));
+      // await Match.bulkCreate(matchAllTeam)
+      const genMatch = generateMatchDay(turnament, fixtures);
+      console.log('genMatch');
+      console.log(genMatch);
+      return successResponse(res, 'Generate fixture success', 200, genMatch);
     } catch (err) {
       next(err);
     }

@@ -22,9 +22,6 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
-      FixtureId: {
-        type: Sequelize.INTEGER
-      },
       UserId: {
         type: Sequelize.UUID
       },
