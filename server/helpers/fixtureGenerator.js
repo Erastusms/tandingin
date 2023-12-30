@@ -71,17 +71,14 @@ const generateMatchDay = (array, fixtures) => {
         }
         // k--;
     }
-    console.log('fixtureArray')
-    console.log(fixtureArray)
+    
+    // Fixture Generator Done
 
     for (let fix = 0; fix < fixtures.length; fix++) {
-        for (let cat = 0; cat < fixtureArray.length; cat++) {
-            for (let index = 0; index < category.length; index++) {
-                fixtureArray[cat].FixtureId = fixtures[fix].id
-            }
+        for (let index = 0; index < category.length; index++) {
+            fixtureArray[index + fix + k].FixtureId = fixtures[fix].id
         }
-        // k++;
-        // k--;
+        k++;
     }
     return fixtureArray;
 };
