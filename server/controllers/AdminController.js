@@ -181,26 +181,23 @@ class AdminController {
   static async generateMatch(req, res, next) {
     try {
       const LeagueId = req.params.leagueId;
-      console.log('masuk generate match');
       const isMatchExist = await Fixture.findAll({ where: { LeagueId } })
       if (isMatchExist.length > 0) {
         await Fixture.destroy({
           where: { LeagueId },
         });
       }
-      const allTeams = await Team.findAll({ where: { LeagueId } })
-      const teamsName = allTeams.map(team => team.id)
-      const shuffleTeams = teamsName.sort(() => Math.random() - 0.5);
-      const turnament = robin(shuffleTeams.length, shuffleTeams);
-      const matchAllTeam = generateFixture(turnament, LeagueId);
 
-      const fixtureData = getUniqueList(matchAllTeam, 'name')
+      const allTeams = await Team.findAll({ where: { LeagueId } })
+      const teamsID = allTeams.map(team => team.id)
+      const shuffleTeams = teamsID.sort(() => Math.random() - 0.5);
+      const turnament = robin(shuffleTeams.length, shuffleTeams);
+      const genFixture = generateFixture(turnament, LeagueId);
+      const fixtureData = getUniqueList(genFixture, 'name')
       const fixtures = await Fixture.bulkCreate(fixtureData)
-      console.log(fixtures.map(fixture => fixture.id));
-      // await Match.bulkCreate(matchAllTeam)
-      const genMatch = generateMatchDay(turnament, fixtures);
-      console.log('genMatch');
-      console.log(genMatch);
+      const genMatch = generateMatchDay(genFixture, fixtures);
+      await Match.bulkCreate(genMatch)
+
       return successResponse(res, 'Generate fixture success', 200, genMatch);
     } catch (err) {
       next(err);
