@@ -205,9 +205,16 @@ class AdminController {
   }
 
   static async viewMatchInLeague(req, res, next) {
-    const LeagueId = req.params.leagueId;
     try {
-      const fixturesData = await Fixture.findAll({ where: { LeagueId } })
+      const fixturesData = await Fixture.findAll({
+        where: { LeagueId: req.params.leagueId },
+        attributes: ["name", "status", "LeagueId"],
+        include: [{
+          model: Match,
+          attributes: ["score", "category"],
+          include: [Team]
+        }]
+      })
       return successResponse(res, 'Show all fixtures', 200, fixturesData);
     } catch (err) {
       next(err);
@@ -215,22 +222,46 @@ class AdminController {
   }
 
   static async updateScore(req, res, next) {
+    let teamAStatus = 'draw';
+    let teamBStatus = 'draw';
     const UserId = req.userData.id;
-    const LeagueId = req.params.leagueId;
-    const { fixturesId, teamAScore, teamBScore } = req.body
+    const { fixturesId, teamAId, teamBId, teamAScore, teamBScore } = req.body
     try {
       const isUserIdAuthorized = await League.findOne({ where: { UserId } })
       if (!isUserIdAuthorized) {
         return res.status(401).json({ message: "You are not authorized!" })
       }
+
+      if (teamAScore > teamBScore) {
+        teamAStatus = 'win'
+        teamBStatus = 'lose'
+      }
+      if (teamAScore < teamBScore) {
+        teamAStatus = 'lose'
+        teamBStatus = 'win'
+      }
+
       await Fixture.update(
         {
-          teamA_score: teamAScore,
-          teamB_score: teamBScore,
           status: 'FullTime'
         },
-        { where: { id: fixturesId, LeagueId } }
+        { where: { id: fixturesId } }
       );
+
+      await Match.update({
+        score: teamAScore,
+        status: teamAStatus
+      },
+        { where: { FixtureId: fixturesId, TeamId: teamAId } }
+      )
+
+      await Match.update({
+        score: teamBScore,
+        status: teamBStatus
+      },
+        { where: { FixtureId: fixturesId, TeamId: teamBId } }
+      )
+
       return successResponse(res, 'Score has been updated');
     } catch (err) {
       next(err);
