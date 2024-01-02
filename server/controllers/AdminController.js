@@ -241,26 +241,26 @@ class AdminController {
         teamBStatus = 'win'
       }
 
-      await Fixture.update(
-        {
-          status: 'FullTime'
+      await Promise.all([
+        Fixture.update(
+          {
+            status: 'FullTime'
+          },
+          { where: { id: fixturesId } }
+        ),
+        Match.update({
+          score: teamAScore,
+          status: teamAStatus
         },
-        { where: { id: fixturesId } }
-      );
-
-      await Match.update({
-        score: teamAScore,
-        status: teamAStatus
-      },
-        { where: { FixtureId: fixturesId, TeamId: teamAId } }
-      )
-
-      await Match.update({
-        score: teamBScore,
-        status: teamBStatus
-      },
-        { where: { FixtureId: fixturesId, TeamId: teamBId } }
-      )
+          { where: { FixtureId: fixturesId, TeamId: teamAId } }
+        ),
+        Match.update({
+          score: teamBScore,
+          status: teamBStatus
+        },
+          { where: { FixtureId: fixturesId, TeamId: teamBId } }
+        )
+      ]);
 
       return successResponse(res, 'Score has been updated');
     } catch (err) {
