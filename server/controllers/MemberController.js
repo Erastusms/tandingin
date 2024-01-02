@@ -1,4 +1,5 @@
-const { League, User, Team, Fixture } = require('../models');
+const _ = require("lodash");
+const { League, User, Team, Fixture, Match } = require('../models');
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
@@ -84,28 +85,38 @@ class MemberController {
   }
 
   static async viewMatch(req, res, next) {
-    const TeamName = req.params.teamId;
+    const TeamId = req.params.teamId;
     try {
-      const matchTeam = await Fixture.findAll({ where: { teamA: TeamName } })
-      const match2Team = await Fixture.findAll({ where: { teamB: TeamName } })
-      const dataMatch = matchTeam.map((match) => {
-        return {
-          id: match.id,
-          name: match.name,
-          home: match.teamA,
-          away: match.teamB,
-        }
+      // where: { LeagueId: req.params.leagueId },
+      //   attributes: ["name", "status", "LeagueId"],
+      //   include: [{
+      //     model: Match,
+      //     attributes: ["score", "category"],
+      //     include: [Team]
+      //   }]
+      const fixturesData = await Match.findAll({
+        where: { TeamId },
       })
-      const dataMatch2 = match2Team.map((match) => {
-        return {
-          id: match.id,
-          name: match.name,
-          home: match.teamA,
-          away: match.teamB,
-        }
+      // const fixturesID = fixturesData.map(fix => fix.FixtureId)
+
+      const matchDataTeam = await Fixture.findAll({
+        attributes: ["name", "status", "LeagueId"],
+        where: { id: fixturesData.map(fix => fix.FixtureId) },
+        include: [{
+          model: Match,
+          attributes: ["id", "status", "score", "category"],
+          include: [{
+            model: Team,
+            attributes: ["id", "name", "shortname", "logo"]
+          }],
+        }],
+        order: [["name", "ASC"]]
       })
-      const allData = dataMatch.concat(dataMatch2)
-      return successResponse(res, 'Show Match', 200, allData);
+
+      // const sort = _.sortBy(matchDataTeam, ['Matches.id']);
+
+      // const allData = dataMatch.concat(dataMatch2)
+      return successResponse(res, 'Show Match', 200, matchDataTeam);
     } catch (err) {
       next(err);
     }
