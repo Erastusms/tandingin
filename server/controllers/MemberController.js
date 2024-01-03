@@ -85,10 +85,9 @@ class MemberController {
   }
 
   static async viewMatch(req, res, next) {
-    const TeamId = req.params.teamId;
     try {
       const fixturesData = await Match.findAll({
-        where: { TeamId },
+        where: { TeamId: req.params.teamId },
       })
 
       const matchDataTeam = await Fixture.findAll({
@@ -105,9 +104,8 @@ class MemberController {
         order: [["name", "ASC"]]
       })
 
-      // const sort = _.sortBy(matchDataTeam, ['Matches.id']);
+      matchDataTeam.map(data => { data.Matches.sort((a, b) => a.id - b.id) })
 
-      // const allData = dataMatch.concat(dataMatch2)
       return successResponse(res, 'Show Match', 200, matchDataTeam);
     } catch (err) {
       next(err);
