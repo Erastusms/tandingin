@@ -52,5 +52,10 @@ AdminRouter.put(
   validator(UpdateScoreSchema, 'body'),
   adminController.updateScore
 );
+AdminRouter.get(
+  '/dashboard',
+  checkAuth('admin'),
+  adminController.viewDashboard
+);
 
 module.exports = AdminRouter;
