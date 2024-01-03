@@ -87,17 +87,9 @@ class MemberController {
   static async viewMatch(req, res, next) {
     const TeamId = req.params.teamId;
     try {
-      // where: { LeagueId: req.params.leagueId },
-      //   attributes: ["name", "status", "LeagueId"],
-      //   include: [{
-      //     model: Match,
-      //     attributes: ["score", "category"],
-      //     include: [Team]
-      //   }]
       const fixturesData = await Match.findAll({
         where: { TeamId },
       })
-      // const fixturesID = fixturesData.map(fix => fix.FixtureId)
 
       const matchDataTeam = await Fixture.findAll({
         attributes: ["name", "status", "LeagueId"],

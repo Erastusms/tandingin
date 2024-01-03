@@ -10,6 +10,24 @@ const { successResponse } = require('../response');
 const { generateFixture, generateMatchDay } = require('../helpers/fixtureGenerator');
 
 class AdminController {
+  static async viewDashboard(req, res, next) {
+    try {
+      const leagueData = await League.findOne({
+        where: { UserId: req.userData.id },
+        include: [Fixture, Team]
+      })
+
+      return successResponse(res, 'View Dashboard', 200, {
+        participants: `${leagueData.Teams.length} Teams`,
+        fixtures: `${leagueData.Fixtures.length} Match`,
+        leagueData
+      });
+
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async createLeague(req, res, next) {
     try {
       let file = req.file;
