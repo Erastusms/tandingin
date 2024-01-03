@@ -101,10 +101,11 @@ class MemberController {
             attributes: ["id", "name", "shortname", "logo"]
           }],
         }],
-        order: [["name", "ASC"]]
+        order: [
+          ['name', 'ASC'],
+          [Match, 'id', 'ASC'],
+        ],
       })
-
-      matchDataTeam.map(data => { data.Matches.sort((a, b) => a.id - b.id) })
 
       return successResponse(res, 'Show Match', 200, matchDataTeam);
     } catch (err) {
