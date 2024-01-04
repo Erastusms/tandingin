@@ -156,21 +156,12 @@ class UserController {
   }
 
   static async updateProfile(req, res) {
-    const id = req.userData.id;
-
-    // if (file) {
-    //   file = file.filename;
-    //   await fs.unlink(path.join(`public/images/avatars/${user.avatar}`));
-    // } else {
-    //   file = user.avatar;
-    // }
-
     try {
       await User.update(
         {
           ...req.body
         },
-        { where: { id }, individualHooks: true }
+        { where: { id: req.userData.id }, individualHooks: true }
       );
 
       const userAfterUpdate = await User.findByPk(id);
