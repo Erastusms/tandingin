@@ -18,7 +18,7 @@ class MemberController {
         name,
         shortname,
         UserId,
-        logo: file ? file.filename : 'ImageNotSet.png',
+        logo: file ? `images/team/${file.filename}` : 'images/ImageNotSet.png',
       });
 
       return successResponse(res, 'Team successfully created', 201);

@@ -50,7 +50,7 @@ class AdminController {
       await League.create({
         ...dataConvert,
         quota_available: quota,
-        logo: file ? file.filename : 'ImageNotSet.png',
+        logo: file ? `images/league/${file.filename}` : 'images/ImageNotSet.png',
         status: 'open',
         createdBy: users.username,
         updatedBy: users.username,
@@ -94,7 +94,7 @@ class AdminController {
     try {
       await League.update(
         {
-          logo: file ? file.filename : 'blank.png',
+          logo: file ? `images/league/${file.filename}` : 'images/ImageNotSet.png',
         },
         { where: { id: LeagueId } }
       );
@@ -109,6 +109,15 @@ class AdminController {
     try {
       const leagues = await League.findAll({});
       return res.status(200).json(leagues);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async viewDescriptionLeague(req, res, next) {
+    try {
+      const leagues = await League.findOne({ where: { id: req.params.LeagueId } });
+      return res.status(200).json(convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
       next(err);
     }
