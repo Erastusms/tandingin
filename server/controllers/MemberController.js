@@ -112,6 +112,30 @@ class MemberController {
       next(err);
     }
   }
+
+  static async viewAllTeam(req, res, next) {
+    try {
+      const dataTeam = await Team.findAll({})
+
+      return successResponse(res, 'Show Data', 200, dataTeam);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async viewTeamUser(req, res, next) {
+    const UserId = req.userData.id;
+    try {
+      const dataTeam = await Team.findAll({ where: { UserId } })
+
+      return successResponse(res, 'Show Data', 200, {
+        totalData: dataTeam.length,
+        dataTeam
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = MemberController;
