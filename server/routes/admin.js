@@ -26,7 +26,7 @@ AdminRouter.put(
   adminController.updateLogo
 );
 AdminRouter.get('/league/list/all', adminController.viewListLeague);
-AdminRouter.get('/league/description/:LeagueId', adminController.viewDescriptionLeague);
+AdminRouter.get('/league/detail/:LeagueId', adminController.viewDetailLeague);
 AdminRouter.get(
   '/league/list',
   validator(ListSchema, 'query'),

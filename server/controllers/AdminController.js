@@ -120,10 +120,11 @@ class AdminController {
     }
   }
 
-  static async viewDescriptionLeague(req, res, next) {
+  static async viewDetailLeague(req, res, next) {
     try {
       const leagues = await League.findOne({ where: { id: req.params.LeagueId } });
-      return res.status(200).json(convertObjectToCamelCase(leagues.dataValues));
+      return successResponse(res, 'Generate fixture success', 200, convertObjectToCamelCase(leagues.dataValues));
+      // return res.status(200).json(convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
       next(err);
     }
