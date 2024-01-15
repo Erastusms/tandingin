@@ -124,7 +124,6 @@ class AdminController {
     try {
       const leagues = await League.findOne({ where: { id: req.params.LeagueId } });
       return successResponse(res, 'Generate fixture success', 200, convertObjectToCamelCase(leagues.dataValues));
-      // return res.status(200).json(convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
       next(err);
     }
@@ -215,19 +214,30 @@ class AdminController {
 
   static async generateMatch(req, res, next) {
     try {
-      const LeagueId = req.params.leagueId;
-      const isMatchExist = await Fixture.findAll({ where: { LeagueId } })
+      const id = req.params.leagueId;
+      const { quota_available: isFull } = await League.findOne({
+        attributes: ['quota_available'],
+        where: { id }
+      });
+
+      if (isFull > 0) {
+        return res.status(500).json({
+          message: `Cannot generate match because there is still available quota`
+        })
+      }
+
+      const isMatchExist = await Fixture.findAll({ where: { LeagueId: id } })
       if (isMatchExist.length > 0) {
         await Fixture.destroy({
-          where: { LeagueId },
+          where: { LeagueId: id },
         });
       }
 
-      const allTeams = await Team.findAll({ where: { LeagueId } })
+      const allTeams = await Team.findAll({ where: { LeagueId: id } })
       const teamsID = allTeams.map(team => team.id)
       const shuffleTeams = teamsID.sort(() => Math.random() - 0.5);
       const turnament = robin(shuffleTeams.length, shuffleTeams);
-      const genFixture = generateFixture(turnament, LeagueId);
+      const genFixture = generateFixture(turnament, id);
       const fixtureData = getUniqueList(genFixture, 'name')
       const fixtures = await Fixture.bulkCreate(fixtureData)
       const genMatch = generateMatchDay(genFixture, fixtures);
