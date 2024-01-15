@@ -1,5 +1,7 @@
 const robin = require('roundrobin');
 const _ = require("lodash");
+const fs = require("fs-extra");
+const path = require("path");
 const { League, User, Team, Fixture, Match } = require('../models');
 const {
   convertObjectToSnakeCase,
@@ -88,17 +90,21 @@ class AdminController {
   }
 
   static async updateLogo(req, res, next) {
-    const LeagueId = req.params.leagueId;
+    const id = req.params.leagueId;
     const file = req.file;
 
     try {
-      await League.update(
-        {
-          logo: file ? `images/league/${file.filename}` : 'images/ImageNotSet.png',
-        },
-        { where: { id: LeagueId } }
-      );
-
+      if (file) {
+        const liga = await League.findByPk(id);
+        const logo = liga.logo;
+        await fs.unlink(path.join(`public/${logo}`));
+        await League.update(
+          {
+            logo: file ? `images/league/${file.filename}` : 'images/ImageNotSet.png',
+          },
+          { where: { id } }
+        );
+      }
       return successResponse(res, 'Logo successfully updated');
     } catch (err) {
       next(err);
