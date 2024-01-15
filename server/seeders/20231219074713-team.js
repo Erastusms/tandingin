@@ -24,9 +24,9 @@ module.exports = {
         id: uuidv4(),
         ...team,
         status: 'Approved',
-        logo: 'ImageNotSet.png',
-        LeagueId: LeagueId ?? '29272733-8593-4290-b88c-e0b232081b36',
-        UserId: '851487d7-63de-42b2-a9f5-8ab55cb1ea4f',
+        logo: 'images/ImageNotSet.png',
+        LeagueId: LeagueId ?? 'ea9d5473-757a-421b-b4f8-1306e11a5022',
+        UserId: 'c9fba6ed-5068-4669-9e23-562d0458be07',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
