@@ -132,7 +132,8 @@ class AdminController {
           where: { id: LeagueId },
         }
       );
-      return successResponse(res, 'League list success', 200, leaguesData);
+
+      return successResponse(res, 'League list success', 200, convertObjectToCamelCase(leaguesData.dataValues));
     } catch (err) {
       next(err);
     }

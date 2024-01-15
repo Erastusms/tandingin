@@ -26,4 +26,16 @@ MemberRouter.get(
   memberController.viewMatch
 );
 
+MemberRouter.get(
+  "/team/list",
+  checkAuth('member'),
+  memberController.viewAllTeam
+);
+
+MemberRouter.get(
+  "/team/list/me",
+  checkAuth('member'),
+  memberController.viewTeamUser
+);
+
 module.exports = MemberRouter;
