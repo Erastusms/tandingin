@@ -23,7 +23,7 @@ AdminRouter.put(
   '/league/logo/:leagueId',
   MulterSingle('./public/images/league'),
   checkAuth('admin'),
-  adminController.updateLogo
+  adminController.updateLogo,
 );
 AdminRouter.get('/league/list/all', adminController.viewListLeague);
 AdminRouter.get('/league/detail/:LeagueId', adminController.viewDetailLeague);

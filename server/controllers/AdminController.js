@@ -97,7 +97,10 @@ class AdminController {
       if (file) {
         const liga = await League.findByPk(id);
         const logo = liga.logo;
-        await fs.unlink(path.join(`public/${logo}`));
+        const isDefaultPhoto = logo.toLowerCase().includes('imagenotset')
+        if (!isDefaultPhoto) {
+          await fs.unlink(path.join(`public/${logo}`));
+        }
         await League.update(
           {
             logo: file ? `images/league/${file.filename}` : 'images/ImageNotSet.png',
@@ -105,8 +108,10 @@ class AdminController {
           { where: { id } }
         );
       }
+
       return successResponse(res, 'Logo successfully updated');
     } catch (err) {
+      await fs.unlink(path.join(`public/images/league/${file.filename}`));
       next(err);
     }
   }
