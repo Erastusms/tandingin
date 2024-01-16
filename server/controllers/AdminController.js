@@ -117,18 +117,20 @@ class AdminController {
   }
 
   static async viewListLeague(req, res, next) {
+    const { page = 1, pageSize = 5 } = req.query
     try {
-      const leagues = await League.findAll({});
-      return res.status(200).json(leagues);
-    } catch (err) {
-      next(err);
-    }
-  }
+      const leagues = await League.findAll({
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+        order: [['createdAt', 'ASC']],
+        include: [Team]
+      });
 
-  static async viewDetailLeague(req, res, next) {
-    try {
-      const leagues = await League.findOne({ where: { id: req.params.LeagueId } });
-      return successResponse(res, 'Generate fixture success', 200, convertObjectToCamelCase(leagues.dataValues));
+      return successResponse(res, 'League list success', 200, {
+        page,
+        pageSize,
+        leaguesData: leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
+      });
     } catch (err) {
       next(err);
     }
@@ -154,6 +156,39 @@ class AdminController {
       );
 
       return successResponse(res, 'League list success', 200, convertObjectToCamelCase(leaguesData.dataValues));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async viewListAdminLeague(req, res, next) {
+    const { page = 1, pageSize = 5 } = req.query
+    try {
+      const leaguesData = await League.findAll(
+        {
+          where: {
+            UserId: req.userData.id
+          },
+          offset: (page - 1) * pageSize,
+          limit: pageSize,
+          order: [['createdAt', 'ASC']]
+        }
+      );
+
+      return successResponse(res, 'League list success', 200, {
+        page,
+        pageSize,
+        leaguesData: leaguesData.map((liga => convertObjectToCamelCase(liga.dataValues)))
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async viewDetailLeague(req, res, next) {
+    try {
+      const leagues = await League.findOne({ where: { id: req.params.LeagueId } });
+      return successResponse(res, 'Generate fixture success', 200, convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
       next(err);
     }
