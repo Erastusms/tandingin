@@ -25,12 +25,17 @@ AdminRouter.put(
   checkAuth('admin'),
   adminController.updateLogo,
 );
-AdminRouter.get('/league/list/all', adminController.viewListLeague);
 AdminRouter.get('/league/detail/:LeagueId', adminController.viewDetailLeague);
+AdminRouter.get('/league/list/all', adminController.viewListLeague);
 AdminRouter.get(
   '/league/list',
   validator(ListSchema, 'query'),
   adminController.viewListTeamInLeague
+);
+AdminRouter.get(
+  '/league/list/me',
+  checkAuth('admin'),
+  adminController.viewListAdminLeague
 );
 AdminRouter.put(
   '/league/approval/status',
