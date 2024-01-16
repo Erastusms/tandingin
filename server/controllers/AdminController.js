@@ -125,11 +125,13 @@ class AdminController {
         order: [['createdAt', 'ASC']],
         include: [Team]
       });
+      const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
 
       return successResponse(res, 'League list success', 200, {
         page,
         pageSize,
-        leaguesData: leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
+        totalData: leaguesData.length,
+        leaguesData
       });
     } catch (err) {
       next(err);
@@ -164,7 +166,7 @@ class AdminController {
   static async viewListAdminLeague(req, res, next) {
     const { page = 1, pageSize = 5 } = req.query
     try {
-      const leaguesData = await League.findAll(
+      const leagues = await League.findAll(
         {
           where: {
             UserId: req.userData.id
@@ -174,11 +176,13 @@ class AdminController {
           order: [['createdAt', 'ASC']]
         }
       );
+      const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
 
       return successResponse(res, 'League list success', 200, {
         page,
         pageSize,
-        leaguesData: leaguesData.map((liga => convertObjectToCamelCase(liga.dataValues)))
+        totalData: leaguesData.length,
+        leaguesData
       });
     } catch (err) {
       next(err);
