@@ -25,7 +25,7 @@ module.exports = {
         ...team,
         status: 'Approved',
         logo: 'images/ImageNotSet.png',
-        LeagueId: LeagueId ?? 'ea9d5473-757a-421b-b4f8-1306e11a5022',
+        LeagueId: LeagueId ?? 'a1392408-0823-4474-920c-5fd1d74be66e',
         UserId: 'c9fba6ed-5068-4669-9e23-562d0458be07',
         createdAt: new Date(),
         updatedAt: new Date(),

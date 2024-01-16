@@ -5,6 +5,11 @@ const { checkAuth } = require('../middlewares/auth');
 const { CreateSchema, ApprovalSchema, ListSchema, UpdateScoreSchema } = require('../validator/LeagueSchema');
 const { MulterSingle } = require('../middlewares/multer');
 
+AdminRouter.get(
+  '/dashboard',
+  checkAuth('admin'),
+  adminController.viewDashboard
+);
 AdminRouter.post(
   '/league',
   validator(CreateSchema, 'body'),
@@ -58,10 +63,10 @@ AdminRouter.put(
   validator(UpdateScoreSchema, 'body'),
   adminController.updateScore
 );
-AdminRouter.get(
-  '/dashboard',
+AdminRouter.delete(
+  '/league/:id',
   checkAuth('admin'),
-  adminController.viewDashboard
+  adminController.deleteLeague
 );
 
 module.exports = AdminRouter;

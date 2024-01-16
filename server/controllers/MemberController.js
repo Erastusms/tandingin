@@ -136,6 +136,26 @@ class MemberController {
       next(err);
     }
   }
+
+  static async deleteTeam(req, res, next) {
+    const id = req.params.id;
+    try {
+      const { UserId } = await Team.findByPk(id);
+      if (UserId === req.userData.id) {
+        const destroyTeam = await Team.destroy({ where: { id, UserId } });
+        if (destroyTeam === 0) return res.status(404).json({
+          message: `Team is not found`
+        })
+        return successResponse(res, 'Team has been deleted');
+      }
+
+      return res.status(403).json({
+        message: 'Your forbidden'
+      })
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = MemberController;

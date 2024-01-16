@@ -38,4 +38,10 @@ MemberRouter.get(
   memberController.viewTeamUser
 );
 
+MemberRouter.delete(
+  "/team/:id",
+  checkAuth('member'),
+  memberController.deleteTeam
+);
+
 module.exports = MemberRouter;

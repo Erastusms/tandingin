@@ -356,6 +356,39 @@ class AdminController {
       next(err);
     }
   }
+
+  static async deleteLeague(req, res, next) {
+    const id = req.params.id;
+    try {
+      const { UserId, logo } = await League.findByPk(id);
+      if (UserId === req.userData.id) {
+        const destroyLeague = await League.destroy({ where: { id, UserId } });
+        if (destroyLeague === 0) return res.status(404).json({
+          message: `League is not found`
+        })
+
+        const fixturesDatta = await Fixture.findAll({ where: { LeagueId: id } })
+        const fixturesID = fixturesDatta.map(fix => fix.id)
+        const isDefaultPhoto = logo.toLowerCase().includes('imagenotset')
+        if (!isDefaultPhoto) {
+          await fs.unlink(path.join(`public/${logo}`));
+        }
+
+        await Promise.all([
+          Fixture.destroy({ where: { LeagueId: id } }),
+          Match.destroy({ where: { FixtureId: fixturesID } }),
+          Team.update({ LeagueId: null }, { where: { LeagueId: id } })
+        ]);
+        return successResponse(res, 'League has been deleted');
+      }
+
+      return res.status(403).json({
+        message: 'Your forbidden'
+      })
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = AdminController;
