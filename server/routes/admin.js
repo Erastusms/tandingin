@@ -12,9 +12,9 @@ AdminRouter.get(
 );
 AdminRouter.post(
   '/league',
+  MulterSingle('./public/images/league'),
   validator(CreateSchema, 'body'),
   checkAuth('admin'),
-  MulterSingle('./public/images/league'),
   adminController.createLeague
 );
 AdminRouter.put(
