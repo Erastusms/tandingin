@@ -66,13 +66,7 @@ class AdminController {
   }
 
   static async update(req, res, next) {
-    // const UserId = req.userData.id;
     const LeagueId = req.params.leagueId;
-    // const file = req.file;
-    // console.log(file)
-    // const users = await User.findByPk({ id: UserId });
-    const { name, quota, description, startDate, endDate, prize } = req.body;
-    console.log(name)
     try {
       const dataConvert = convertObjectToSnakeCase(req.body);
       await League.update(
@@ -117,12 +111,12 @@ class AdminController {
   }
 
   static async viewListLeague(req, res, next) {
-    const { page = 1, pageSize = 5 } = req.query
+    const { page = 1, pageSize = 4 } = req.query
     try {
       const leagues = await League.findAll({
         offset: (page - 1) * pageSize,
         limit: pageSize,
-        order: [['createdAt', 'ASC']],
+        order: [['createdAt', 'DESC']],
         include: [Team]
       });
       const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
@@ -164,7 +158,7 @@ class AdminController {
   }
 
   static async viewListAdminLeague(req, res, next) {
-    const { page = 1, pageSize = 5 } = req.query
+    const { page = 1, pageSize = 4 } = req.query
     try {
       const leagues = await League.findAll(
         {
@@ -173,7 +167,7 @@ class AdminController {
           },
           offset: (page - 1) * pageSize,
           limit: pageSize,
-          order: [['createdAt', 'ASC']]
+          order: [['createdAt', 'DESC']]
         }
       );
       const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
