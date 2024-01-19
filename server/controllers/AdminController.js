@@ -10,27 +10,20 @@ const {
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
 const { generateFixture, generateMatchDay } = require('../helpers/fixtureGenerator');
-const CacheService = require('../middlewares/redis');
 
 class AdminController {
   static async viewDashboard(req, res, next) {
     try {
-      let result = await CacheService.getRedis(`dashboard`);
-
-      if (!result) {
-        const leagueData = await League.findOne({
-          where: { UserId: req.userData.id },
-          include: [Fixture, Team]
-        })
-        await setRedis(`totalLikes-${albumId}`, leagueData.rowCount.toString());
-      }
+      const leagueData = await League.findOne({
+        where: { UserId: req.userData.id },
+        include: [Fixture, Team]
+      })
 
       return successResponse(res, 'View Dashboard', 200, {
         participants: `${leagueData.Teams.length} Teams`,
         fixtures: `${leagueData.Fixtures.length} Match`,
         leagueData
       });
-
     } catch (err) {
       next(err);
     }
