@@ -13,6 +13,6 @@ const CreateSchema = Joi.object({
         otherwise: Joi.string().allow(null, '').optional(),
     }),
     prize: Joi.string().required(),
-});
+}).unknown(true);
 
 module.exports = { CreateSchema };
