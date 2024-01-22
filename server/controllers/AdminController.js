@@ -116,7 +116,6 @@ class AdminController {
         offset: (page - 1) * pageSize,
         limit: pageSize,
         order: [['createdAt', 'DESC']],
-        include: [Team]
       });
       const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
 
@@ -184,8 +183,14 @@ class AdminController {
 
   static async viewDetailLeague(req, res, next) {
     try {
-      const leagues = await League.findOne({ where: { id: req.params.LeagueId } });
-      return successResponse(res, 'Generate fixture success', 200, convertObjectToCamelCase(leagues.dataValues));
+      const leagues = await League.findOne(
+        {
+          where: {
+            id: req.params.LeagueId
+          },
+          include: [Team]
+        });
+      return successResponse(res, 'View Detail League', 200, convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
       next(err);
     }
