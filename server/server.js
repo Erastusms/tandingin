@@ -32,7 +32,7 @@ app.use((err, req, res, next) => {
         console.log(err)
         return res.status(err.statusCode).send({
             statusCode: err.statusCode,
-            message: err.message
+            message: err.message // buat handle error sama semua messagenya
         })
     }
 
