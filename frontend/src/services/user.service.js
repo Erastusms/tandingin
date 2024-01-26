@@ -5,10 +5,15 @@ const API_URL = "https://tandingin-production.up.railway.app/api/v1/";
 const API_ALL = "https://tandingin-production.up.railway.app/";
 
 
-const getPublicContent = () => {
-  return axios.get(API_ALL + "admin/league/list");
+// const getPublicContent = () => {
+//   return axios.get(API_ALL + `admin/league/list/all`);
+// };
+const getPublicContent = (page,pageSize) => {
+  return axios.get(API_ALL + `admin/league/list/all?page=${page}&pageSize=${pageSize}`);
 };
-
+const getLeagueDetails = (id) => {
+  return axios.get(API_ALL + `admin/league/detail/${id}`,{ headers: authHeader() });
+};
 const getUserBoard = () => {
   return axios.get(API_URL + "profile", { headers: authHeader() });
 };
@@ -31,5 +36,6 @@ export default {
   getModeratorBoard,
   getAdminBoard,
   getProfile,
+  getLeagueDetails,
   
 };
