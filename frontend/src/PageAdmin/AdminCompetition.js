@@ -39,7 +39,7 @@ function AdminCompetition() {
   const form = useRef();
   const checkBtn = useRef();
   const [openModal, setOpenModal] = useState(false);
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState([]);
   const { user: currentUser } = useSelector((state) => state.auth);
   const [successful, setSuccessful] = useState(false);
    const [name, setName] = useState('')
@@ -144,7 +144,7 @@ function AdminCompetition() {
     UserService.getPublicContent(page,pageSize).then(
       (response) => {
         setDataCreated(false);
-        setContent(response.data);
+        setContent(response.data.data.leaguesData);
         setTotalData(response.data.totalData);
         setPageSize(response.data.pageSize);
         //setCurrentPage(response.data.page);
@@ -152,7 +152,7 @@ function AdminCompetition() {
 
 
 
-        //console.log(response.data);
+        console.log(response.data.data.leaguesData);
       },
       (error) => {
         const _content =
@@ -172,7 +172,7 @@ function AdminCompetition() {
   // );
 
 
-   console.log(content);
+  //  console.log(content);
 
   if (!currentUser) {
     return <Navigate to="/login" />;
@@ -202,7 +202,9 @@ function AdminCompetition() {
           </Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
-        {content?.data?.leaguesData?.map((e)=>{
+        {
+        content.length > 0 ? (
+        content.map((e)=>{
        return (
           <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
             <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
@@ -233,9 +235,12 @@ function AdminCompetition() {
             </Table.Cell>
           </Table.Row>
           
-          );
+          )
+          })): (
+            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 text-center font-bold" >
+              There's No Team in this League
+              </Table.Row>)
           
-          })
         }
         <div className="flex overflow-x-auto sm:justify-center">
           {/* <Pagination currentPage={xxx} totalPages={xxxxx}  /> */}

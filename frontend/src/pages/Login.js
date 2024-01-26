@@ -61,7 +61,7 @@ function Login() {
         })
         .catch(() => {
           setLoading(false);
-        });l
+        })
     } else {
       setLoading(false);
     }
