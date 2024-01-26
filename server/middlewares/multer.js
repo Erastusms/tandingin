@@ -2,7 +2,7 @@ const multer = require("multer");
 const { tokenVerifier } = require("../helpers/jwt");
 
 const MulterSingle = (dest) => {
-  var storage = multer.diskStorage({
+  const storage = multer.diskStorage({
     destination: `${dest}`,
     filename: (req, file, cb) => {
       // const { access_token } = req.headers;
@@ -18,7 +18,7 @@ const MulterSingle = (dest) => {
       cb(null, Date.now() + `-${file.originalname}`);
     },
   });
-  var upload = multer({
+  const upload = multer({
     storage: storage,
   });
 

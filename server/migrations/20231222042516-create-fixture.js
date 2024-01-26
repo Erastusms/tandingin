@@ -2,32 +2,22 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Teams', {
+    await queryInterface.createTable('Fixtures', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
         allowNull: false,
-        unique: true
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
       },
       name: {
         type: Sequelize.STRING
       },
-      shortname: {
-        type: Sequelize.STRING
-      },
-      logo: {
-        type: Sequelize.STRING
-      },
       status: {
-        type: Sequelize.STRING
-      },
-      UserId: {
-        type: Sequelize.UUID
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       LeagueId: {
-        type: Sequelize.UUID,
-        allowNull: true,
+        type: Sequelize.UUID
       },
       createdAt: {
         allowNull: false,
@@ -37,9 +27,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }, {
+      initialAutoIncrement: 100000,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Teams');
+    await queryInterface.dropTable('Fixtures');
   }
 };

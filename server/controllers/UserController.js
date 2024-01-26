@@ -1,4 +1,5 @@
-const { User } = require('../models');
+const { Op } = require("sequelize");
+const { User, League, Team } = require('../models');
 const { decrypter, encrypter } = require('../helpers/bcrypt');
 const { tokenGenerator } = require('../helpers/jwt');
 const {
@@ -14,12 +15,8 @@ const { authorizationUrl, getSyncGoogle } = require('../helpers/GoogleHelpers');
 class UserController {
   static async register(req, res, next) {
     try {
-      // let file = req.file;
-      // const { username, teamName, shortName, role, email, password, reTypePassword } = req.body;
-      const { fullname, username, email, password, role } = req.body;
-      // shortName max 3 karakter
       const findEmail = await User.findOne({
-        where: { email: email.toLowerCase() },
+        where: { email: req.body.email.toLowerCase() },
       });
 
       if (findEmail) {
@@ -29,13 +26,9 @@ class UserController {
       }
 
       await User.create({
-        fullname,
-        username,
-        email,
-        password,
-        role,
+        ...req.body
       });
-      return successResponse(res, 201, 'user successfully created');
+      return successResponse(res, 'user successfully created', 201);
     } catch (err) {
       next(err);
     }
@@ -59,7 +52,7 @@ class UserController {
 
       if (user) {
         if (decrypter(password, user.password)) {
-          return successResponse(res, 200, 'You are successfully logged in', {
+          return successResponse(res, 'You are successfully logged in', 200, {
             access_token: tokenGenerator(user),
             role: user.role
           });
@@ -146,10 +139,10 @@ class UserController {
     //     },
     //     token: token
     // })
-    return successResponse(res, 200, 'Successfully login!', {
-        access_token: tokenGenerator(user),
-        role: user.role
-    }) 
+    return successResponse(res, 'Successfully login!', {
+      access_token: tokenGenerator(user),
+      role: user.role
+    })
   }
 
   static async profilePage(req, res, next) {
@@ -158,33 +151,17 @@ class UserController {
       let users = await User.findByPk(id);
       return res.status(200).json(users);
     } catch (err) {
-      // res.status(500).json(err);
       next(err);
     }
   }
 
   static async updateProfile(req, res) {
-    const id = req.userData.id;
-    const file = req.file;
-    const { fullname, username, email, password } = req.body;
-
-    // if (file) {
-    //   file = file.filename;
-    //   await fs.unlink(path.join(`public/images/avatars/${user.avatar}`));
-    // } else {
-    //   file = user.avatar;
-    // }
-
     try {
       await User.update(
         {
-          fullname,
-          username,
-          email,
-          password,
-          // avatar: file ? file.filename : "blank.png",
+          ...req.body
         },
-        { where: { id }, individualHooks: true }
+        { where: { id: req.userData.id }, individualHooks: true }
       );
 
       const userAfterUpdate = await User.findByPk(id);
@@ -194,6 +171,35 @@ class UserController {
         message: 'User data has been updated!',
         user: userAfterUpdate,
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async search(req, res, next) {
+    const { query } = req.query
+    try {
+      const dataLeague = await League.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `%${query}%`
+          }
+        }
+      })
+
+      const dataTeam = await Team.findAll({
+        where: {
+          name: {
+            [Op.iLike]: `%${query}%`
+          }
+        }
+      })
+
+      return successResponse(res, 'Show Data', 200, {
+        League: dataLeague.map(data => convertObjectToCamelCase(data.dataValues)),
+        Team: dataTeam.map(data => convertObjectToCamelCase(data.dataValues))
+      })
+
     } catch (err) {
       next(err);
     }

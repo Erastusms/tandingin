@@ -2,10 +2,9 @@
 const {
   Model
 } = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
 
 module.exports = (sequelize, DataTypes) => {
-  class Team extends Model {
+  class Fixture extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,26 +12,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Team.belongsTo(models.League);
-      Team.belongsTo(models.User);
-      Team.hasMany(models.Match);
+      Fixture.hasMany(models.Match);
+      Fixture.belongsTo(models.League);
     }
   }
-  Team.init({
+  Fixture.init({
     name: DataTypes.STRING,
-    shortname: DataTypes.STRING,
-    logo: DataTypes.STRING,
     status: DataTypes.STRING,
-    UserId: DataTypes.UUID,
     LeagueId: DataTypes.UUID,
   }, {
-    hooks: {
-      beforeCreate: (team, options) => {
-        team.id = uuidv4();
-      },
-    },
     sequelize,
-    modelName: 'Team',
+    modelName: 'Fixture',
   });
-  return Team;
+  return Fixture;
 };

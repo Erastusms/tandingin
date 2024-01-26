@@ -1,0 +1,29 @@
+[
+    {
+        "name": "FC Barcelona",
+        "shortname": "BAR"
+    },
+    {
+        "name": "Real Madrid",
+        "shortname": "RMA"
+    },
+    {
+        "name": "Arsenal",
+        "shortname": "ARS"
+    },
+    {
+        "name": "Chelsea",
+        "shortname": "CHE",
+        "LeagueId": "4cf8ec16-a6e2-4efc-83c6-2393ba2f2e27"
+    },
+    {
+        "name": "Persik",
+        "shortname": "PSK",
+        "LeagueId": "4cf8ec16-a6e2-4efc-83c6-2393ba2f2e27"
+    },
+    {
+        "name": "Persija",
+        "shortname": "PSJ",
+        "LeagueId": "4cf8ec16-a6e2-4efc-83c6-2393ba2f2e27"
+    }
+]
