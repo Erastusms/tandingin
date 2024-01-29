@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from 'flowbite-react';
 import UserService from "../services/user.service";
-import { Navigate } from 'react-router-dom';
+import { Navigate,Link } from 'react-router-dom';
 import { useSelector } from "react-redux";
 
 function DashboardAdmin() {
@@ -29,12 +29,16 @@ function DashboardAdmin() {
     return <Navigate to="/login" />;
   }
   return (
-    
-    <div class="p-4 sm:ml-64 m-10 ">
-      <div class="grid grid-cols-3 gap-4 mb-4">
-      {content?.map((e)=>{
+
+    <div class="p-4 sm:ml-64">
+    <div class="p-4  mt-14">
+    <div class="grid grid-cols-2 gap-4 mb-4">
+    {content?.data?.leaguesData?.map((e)=>{
        return (
-      <Card className="max-w-sm" imgSrc="/production.png" horizontal key={e.id}>
+        <Link to={`/admin/dashboard/${e.id}`}>
+          <div class="flex items-center justify-center ">
+          
+      <Card className=" md:w-full" imgSrc={`http://tandingin-production.up.railway.app/${e.logo}`}  key={e.id} horizontal>
       <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
       {e.name}
       </h5>
@@ -42,11 +46,14 @@ function DashboardAdmin() {
       {e.description}
       </p>
     </Card>
-         );
+         
+          </div>
+          </Link>
+          );
         })}
-      </div>
-   </div>
-
+       </div>
+       </div>
+</div>
       
   )
 }

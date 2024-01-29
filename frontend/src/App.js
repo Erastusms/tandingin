@@ -9,15 +9,21 @@ import Register from './pages/Register';
 //App Component
 
 //Admin Page
-import Sidebar from './AdminPage/Sidenav';
+import Sidebar from './PageAdmin/Sidenav';
 import Dashboard from './appPages/Dashboard';
 import AppRoot from './app/AppRoot';
-import AdminRoot from './AdminPage/AdminRoot';
-import DashboardAdmin from './AdminPage/DashboardAdmin';
+import AdminRoot from './PageAdmin/AdminRoot';
+import DashboardAdmin from './PageAdmin/DashboardAdmin';
+
+
 
 
 import { logout } from "./actions/auth";
-import MemberCompetition from './AdminPage/MemberCompetition';
+import MemberCompetition from './PageMember/MemberCompetition';
+import AdminCompetition from './PageAdmin/AdminCompetition';
+import AdminProfile from './PageAdmin/AdminProfile';
+import LeagueDetails from './PageAdmin/LeagueDetails';
+import MemberRoot from './PageMember/MemberRoot';
 
 
 
@@ -52,7 +58,29 @@ const router = createBrowserRouter([
     errorElement:<Error/>,
     children: [
       {path:'/admin/dashboard', element:<DashboardAdmin/>},
-      {path:'/admin/mycompetition', element:<MemberCompetition/>},
+      {path:'/admin/dashboard/:id', element:<LeagueDetails/>},
+      {path:'/admin/mycompetition',element:<AdminCompetition/>},
+      // {path:'/admin/member_and_league',element:<MemberCompetition/>},
+      {path:'/admin/profile',element:<AdminProfile/>},
+      {
+        
+      }
+
+    ],
+  },
+  {
+    path:'/member',
+    element: <MemberRoot/> ,
+    errorElement:<Error/>,
+    children: [
+      {path:'/member/dashboard', element:<MemberCompetition/>},
+      // {path:'/admin/dashboard/:id', element:<LeagueDetails/>},
+      // {path:'/admin/mycompetition',element:<AdminCompetition/>},
+      // {path:'/admin/member_and_league',element:<MemberCompetition/>},
+      // {path:'/admin/profile',element:<AdminProfile/>},
+      {
+        
+      }
 
     ],
   },
