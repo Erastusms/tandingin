@@ -6,3 +6,8 @@ export const LOGOUT = "LOGOUT";
 
 export const SET_MESSAGE = "SET_MESSAGE";
 export const CLEAR_MESSAGE = "CLEAR_MESSAGE";
+
+
+export const CREATE_LEAGUE = "CREATE_LEAGUE";
+export const CREATE_FAIL = "CREATE_FAIL";
+export const DELETE_LEAGUE = "DELETE_LEAGUE";

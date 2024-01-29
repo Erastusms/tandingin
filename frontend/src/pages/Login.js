@@ -54,13 +54,14 @@ function Login() {
 
     if (checkBtn.current.context._errors.length === 0) {
       dispatch(login(email, password))
-        .then(() => {
+        .then((data) => {
+          console.log(data);
           navigate("/admin/dashboard");
           window.location.reload();
         })
         .catch(() => {
           setLoading(false);
-        });
+        })
     } else {
       setLoading(false);
     }

@@ -2,13 +2,13 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidenav from './Sidenav'
 
-function AdminRoot() {
+function MemberRoot() {
   return (
     <>
-    <Sidenav/>
+    <Sidenav/>  
     <Outlet/>
     </>
   )
 }
 
-export default AdminRoot
+export default MemberRoot

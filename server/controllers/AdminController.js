@@ -10,6 +10,7 @@ const {
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
 const { generateFixture, generateMatchDay } = require('../helpers/fixtureGenerator');
+// const { RedisFunction } = require('../middlewares/redis');
 
 class AdminController {
   static async viewDashboard(req, res, next) {
@@ -110,18 +111,25 @@ class AdminController {
   }
 
   static async viewListLeague(req, res, next) {
-    const { page = 1, pageSize = 4 } = req.query
+    const { page, pageSize } = req.query
+    const limit = +page
+    const offset = +pageSize
+
+    // const setRedis = await RedisFunction();
+    // console.log('setRedis')
+    // console.log(setRedis)
+    // console.log(RedisFunction())
     try {
       const leagues = await League.findAll({
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
+        offset: (limit - 1) * offset,
+        limit: offset,
         order: [['createdAt', 'DESC']],
       });
       const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
 
       return successResponse(res, 'League list success', 200, {
-        page,
-        pageSize,
+        page: limit,
+        pageSize: offset,
         totalData: leaguesData.length,
         leaguesData
       });
