@@ -1,32 +1,47 @@
-// const redis = require('redis');
+// const { createClient } = require('redis');
+// const { Schema, EntityId, Repository } = require('redis-om')
+// // const { leagueSchema } = require('../validator/RedisSchema/League')
 
-// class CacheService {
-//   constructor() {
-//     client = redis.createClient({
-//       socket: {
-//         host: process.env.REDIS_SERVER,
-//       },
-//     });
+// const albumSchema = new Schema('album', {
+//     artist: { type: 'string' },
+//     title: { type: 'string' },
+//     year: { type: 'number' },
+//     genres: { type: 'string[]' },
+//     songDurations: { type: 'number[]' },
+//     outOfPublication: { type: 'boolean' }
+// }, {
+//     dataStructure: 'JSON'
+// })
 
-//     client.on('error', (error) => {
-//       console.error(error);
-//     });
+// const RedisFunction = async () => {
 
-//     client.connect();
-//   }
+//     const redis = createClient();
+//     redis.on('error', (err) => console.log('Redis Client Error', err));
+//     await redis.connect();
 
-//   static async set(key, value, expirationInSecond = 1800) {
-//     await client.set(key, value, {
-//       EX: expirationInSecond,
-//     });
-//   }
+//     console.log('masuk redis')
 
-//   static async get(key) {
-//     const result = await client.get(key);
-//     return result;
-//   }
+//     // const aString = await redis.ping() // 'PONG'
+//     // const aNumber = await redis.hSet('foo', 'alfa', '42', 'bravo', '23') // 2
+//     // const aHash = await redis.hGetAll('foo') // { alfa: '42', bravo: '23' }
 
-//   static delete(key) { return client.del(key); }
+//     // console.log('aHash') // { alfa: '42', bravo: '23' }
+//     // console.log(aHash)
+//     const albumRepository = new Repository(albumSchema, redis)
+//     let album = {
+//         artist: "Mushroomhead",
+//         title: "The Righteous & The Butterfly",
+//         year: 2014,
+//         genres: ['metal'],
+//         songDurations: [204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219],
+//         outOfPublication: true
+//     }
+
+//     album = await albumRepository.save(album)
+//     console.log('album[EntityId]')
+//     console.log(album)
+
+//     return album;
 // }
 
-// module.exports = CacheService;
+// module.exports = { RedisFunction };
