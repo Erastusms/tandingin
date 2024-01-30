@@ -111,7 +111,7 @@ class AdminController {
   }
 
   static async viewListLeague(req, res, next) {
-    const { page, pageSize } = req.query
+    const { page = 1, pageSize = 4 } = req.query
     const limit = +page
     const offset = +pageSize
 
