@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const pg = require('pg');
 
 module.exports = {
@@ -7,15 +7,15 @@ module.exports = {
     password: 'admin',
     database: 'tandingin',
     host: 'localhost',
-    dialect: "postgres",
+    dialect: 'postgres',
     dialectModule: pg,
   },
   test: {
-    username: "root",
+    username: 'root',
     password: null,
-    database: "database_test",
-    host: "127.0.0.1",
-    dialect: "postgres",
+    database: 'database_test',
+    host: '127.0.0.1',
+    dialect: 'postgres',
     dialectModule: pg,
   },
   production: {
@@ -24,7 +24,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     url: process.env.DB_URL_PROD,
-    dialect: "postgres",
+    dialect: 'postgres',
     dialectModule: pg,
   }
 };

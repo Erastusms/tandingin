@@ -13,19 +13,19 @@ const failActionHandler = (error) => {
       key === 'value' ? error.output.error = 'Payload can not be empty' : error.output.payload.error = `${key} must be an object`;
       break;
     case 'any.required':
-      error.output.error = err.path + ' is required';
+      error.output.error = `${err.path} is required`;
       break;
     case 'date.base':
-      error.output.error = err.path + ' must be valid date format';
+      error.output.error = `${err.path} must be valid date format`;
       break;
     case 'number.min':
-      error.output.error = err.path + ' has exceed or below the minimum value';
+      error.output.error = `${err.path} has exceed or below the minimum value`;
       break;
     case 'number.max':
-      error.output.error = err.path + ' has exceed the maximum value';
+      error.output.error = `${err.path} has exceed the maximum value`;
       break;
     case 'number.base':
-      error.output.error = err.path + ' must be valid number';
+      error.output.error = `${err.path} must be valid number`;
       break;
     case 'object.missing':
       error.output.error = 'Please fill filter before search';
@@ -34,7 +34,7 @@ const failActionHandler = (error) => {
       error.output.error = 'End Date must be greater or equal than Start Date';
       break;
     case 'date.isoDate':
-      error.output.error = err.path + ' must be valid ISO format';
+      error.output.error = `${err.path} must be valid ISO format`;
       break;
     case 'string.min':
       error.output.error = `${key} length must be at least ${limit} characters`;
@@ -71,7 +71,7 @@ const failActionHandler = (error) => {
       error.output.error = err;
   }
   
-  return error.output
+  return error.output;
 };
 
 module.exports = {

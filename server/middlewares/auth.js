@@ -1,34 +1,32 @@
-const { tokenVerifier } = require("../helpers/jwt");
+const { tokenVerifier } = require('../helpers/jwt');
 
-const checkAuth = (role) => {
-  return (req, res, next) => {
-    const { access_token } = req.headers;
-    try {
-      if (access_token) {
-        const decoded = tokenVerifier(access_token);
-        if (decoded.role.toLowerCase() === role) {
-          req.userData = decoded;
-          next();
-        } else {
-          throw {
-            status: 401,
-            message: "You are not authorized!",
-          };
-        }
+const checkAuth = (role) => (req, res, next) => {
+  const { access_token } = req.headers;
+  try {
+    if (access_token) {
+      const decoded = tokenVerifier(access_token);
+      if (decoded.role.toLowerCase() === role) {
+        req.userData = decoded;
+        next();
       } else {
         throw {
-          status: 404,
-          message: "Token not found!",
+          status: 401,
+          message: 'You are not authorized!',
         };
       }
-    } catch (err) {
-      res.status(500).json({
-        status: 500,
-        ...err,
-      });
+    } else {
+      throw {
+        status: 404,
+        message: 'Token not found!',
+      };
     }
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      ...err,
+    });
   }
-}
+};
 
 const auth = (req, res, next) => {
   const { access_token } = req.headers;
@@ -41,7 +39,7 @@ const auth = (req, res, next) => {
     } else {
       throw {
         status: 404,
-        message: "Token not found!",
+        message: 'Token not found!',
       };
     }
   } catch (err) {

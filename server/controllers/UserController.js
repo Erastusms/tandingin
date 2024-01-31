@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
 const { User, League, Team } = require('../models');
 const { decrypter, encrypter } = require('../helpers/bcrypt');
 const { tokenGenerator } = require('../helpers/jwt');
@@ -11,6 +11,7 @@ const { authorizationUrl, getSyncGoogle } = require('../helpers/GoogleHelpers');
 // const fs = require("fs-extra");
 // const path = require("path");
 // const randomstring = require("randomstring");
+const { personRepository } = require('../middlewares/person');
 
 class UserController {
   static async register(req, res, next) {
@@ -46,7 +47,7 @@ class UserController {
   static async login(req, res, next) {
     try {
       const { email, password } = req.body;
-      let user = await User.findOne({
+      const user = await User.findOne({
         where: { email },
       });
 
@@ -92,7 +93,7 @@ class UserController {
       });
     }
 
-    let user = await User.findOne({
+    const user = await User.findOne({
       where: { email },
     });
     // if (!data.email || !data.name) {
@@ -142,13 +143,13 @@ class UserController {
     return successResponse(res, 'Successfully login!', {
       access_token: tokenGenerator(user),
       role: user.role
-    })
+    });
   }
 
   static async profilePage(req, res, next) {
     try {
-      const id = req.userData.id;
-      let users = await User.findByPk(id);
+      const { id } = req.userData;
+      const users = await User.findByPk(id);
       return res.status(200).json(users);
     } catch (err) {
       next(err);
@@ -177,7 +178,7 @@ class UserController {
   }
 
   static async search(req, res, next) {
-    const { query } = req.query
+    const { query } = req.query;
     try {
       const dataLeague = await League.findAll({
         where: {
@@ -185,7 +186,7 @@ class UserController {
             [Op.iLike]: `%${query}%`
           }
         }
-      })
+      });
 
       const dataTeam = await Team.findAll({
         where: {
@@ -193,13 +194,21 @@ class UserController {
             [Op.iLike]: `%${query}%`
           }
         }
-      })
+      });
 
       return successResponse(res, 'Show Data', 200, {
-        League: dataLeague.map(data => convertObjectToCamelCase(data.dataValues)),
-        Team: dataTeam.map(data => convertObjectToCamelCase(data.dataValues))
-      })
+        League: dataLeague.map((data) => convertObjectToCamelCase(data.dataValues)),
+        Team: dataTeam.map((data) => convertObjectToCamelCase(data.dataValues))
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 
+  static async getRedis(req, res, next) {
+    try {
+      const person = await personRepository.createAndSave(req.body);
+      res.send(person);
     } catch (err) {
       next(err);
     }

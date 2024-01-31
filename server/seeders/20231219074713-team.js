@@ -1,11 +1,9 @@
-'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 const { v4: uuidv4 } = require('uuid');
-const fs = require("fs");
+const fs = require('fs');
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     /**
      * Add seed commands here.
      *
@@ -15,10 +13,10 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    let teams = JSON.parse(
-      fs.readFileSync("./seeders/data/teams.json", "utf8")
+    const teams = JSON.parse(
+      fs.readFileSync('./seeders/data/teams.json', 'utf8')
     );
-    let teamsData = teams.map((team) => {
+    const teamsData = teams.map((team) => {
       const { LeagueId } = team;
       return {
         id: uuidv4(),
@@ -31,7 +29,7 @@ module.exports = {
         updatedAt: new Date(),
       };
     });
-    await queryInterface.bulkInsert("Teams", teamsData, {});
+    await queryInterface.bulkInsert('Teams', teamsData, {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -41,6 +39,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete("Teams", null, {});
+    await queryInterface.bulkDelete('Teams', null, {});
   }
 };
