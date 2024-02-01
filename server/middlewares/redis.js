@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const redis = require('redis');
 // class CacheService {
 //   constructor() {
@@ -37,7 +39,9 @@ let redisClient;
 
   redisClient.on('error', (error) => console.error(`Error : ${error}`));
 
-  await redisClient.connect();
+  await redisClient.connect({
+    url: process.env.REDIS_URL
+  });
 })();
 
 module.exports = redisClient;
