@@ -1,5 +1,4 @@
-const multer = require("multer");
-const { tokenVerifier } = require("../helpers/jwt");
+const multer = require('multer');
 
 const MulterSingle = (dest) => {
   const storage = multer.diskStorage({
@@ -15,14 +14,14 @@ const MulterSingle = (dest) => {
       //   name = "user";
       // }
 
-      cb(null, Date.now() + `-${file.originalname}`);
+      cb(null, `${Date.now()}-${file.originalname}`);
     },
   });
   const upload = multer({
-    storage: storage,
+    storage,
   });
 
-  return upload.single("file");
+  return upload.single('file');
 };
 
 module.exports = { MulterSingle };

@@ -1,4 +1,4 @@
-const _ = require("lodash");
+const _ = require('lodash');
 const { League, User, Team, Fixture, Match } = require('../models');
 const {
   convertObjectToSnakeCase,
@@ -9,7 +9,7 @@ const { successResponse } = require('../response');
 class MemberController {
   static async create(req, res, next) {
     try {
-      let file = req.file;
+      const { file } = req;
       const UserId = req.userData.id;
 
       const { name, shortname } = req.body;
@@ -88,24 +88,24 @@ class MemberController {
     try {
       const fixturesData = await Match.findAll({
         where: { TeamId: req.params.teamId },
-      })
+      });
 
       const matchDataTeam = await Fixture.findAll({
-        attributes: ["name", "status", "LeagueId"],
-        where: { id: fixturesData.map(fix => fix.FixtureId) },
+        attributes: ['name', 'status', 'LeagueId'],
+        where: { id: fixturesData.map((fix) => fix.FixtureId) },
         include: [{
           model: Match,
-          attributes: ["id", "status", "score", "category"],
+          attributes: ['id', 'status', 'score', 'category'],
           include: [{
             model: Team,
-            attributes: ["id", "name", "shortname", "logo"]
+            attributes: ['id', 'name', 'shortname', 'logo']
           }],
         }],
         order: [
           ['name', 'ASC'],
           [Match, 'id', 'ASC'],
         ],
-      })
+      });
 
       return successResponse(res, 'Show Match', 200, matchDataTeam);
     } catch (err) {
@@ -115,7 +115,7 @@ class MemberController {
 
   static async viewAllTeam(req, res, next) {
     try {
-      const dataTeam = await Team.findAll({})
+      const dataTeam = await Team.findAll({});
 
       return successResponse(res, 'Show Data', 200, dataTeam);
     } catch (err) {
@@ -126,7 +126,7 @@ class MemberController {
   static async viewTeamUser(req, res, next) {
     const UserId = req.userData.id;
     try {
-      const dataTeam = await Team.findAll({ where: { UserId } })
+      const dataTeam = await Team.findAll({ where: { UserId } });
 
       return successResponse(res, 'Show Data', 200, {
         totalData: dataTeam.length,
@@ -138,20 +138,22 @@ class MemberController {
   }
 
   static async deleteTeam(req, res, next) {
-    const id = req.params.id;
+    const { id } = req.params;
     try {
       const { UserId } = await Team.findByPk(id);
       if (UserId === req.userData.id) {
         const destroyTeam = await Team.destroy({ where: { id, UserId } });
-        if (destroyTeam === 0) return res.status(404).json({
-          message: `Team is not found`
-        })
+        if (destroyTeam === 0) {
+          return res.status(404).json({
+            message: 'Team is not found'
+          }); 
+        }
         return successResponse(res, 'Team has been deleted');
       }
 
       return res.status(403).json({
         message: 'Your forbidden'
-      })
+      });
     } catch (err) {
       next(err);
     }

@@ -1,7 +1,7 @@
 const robin = require('roundrobin');
-const _ = require("lodash");
-const fs = require("fs-extra");
-const path = require("path");
+// const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
 const { League, User, Team, Fixture, Match } = require('../models');
 const {
   convertObjectToSnakeCase,
@@ -10,7 +10,7 @@ const {
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
 const { generateFixture, generateMatchDay } = require('../helpers/fixtureGenerator');
-// const { RedisFunction } = require('../middlewares/redis');
+const redisClient = require('../middlewares/redis');
 
 class AdminController {
   static async viewDashboard(req, res, next) {
@@ -18,7 +18,7 @@ class AdminController {
       const leagueData = await League.findOne({
         where: { UserId: req.userData.id },
         include: [Fixture, Team]
-      })
+      });
 
       return successResponse(res, 'View Dashboard', 200, {
         participants: `${leagueData.Teams.length} Teams`,
@@ -26,14 +26,14 @@ class AdminController {
         leagueData
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
   static async createLeague(req, res, next) {
     try {
-      let file = req.file;
-      const id = req.userData.id;
+      const { file } = req;
+      const { id } = req.userData;
       const users = await User.findByPk(id);
 
       const { name, quota } = req.body;
@@ -61,7 +61,7 @@ class AdminController {
 
       return successResponse(res, 'League successfully created', 201);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -79,19 +79,19 @@ class AdminController {
 
       return successResponse(res, 'League successfully updated');
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
   static async updateLogo(req, res, next) {
     const id = req.params.leagueId;
-    const file = req.file;
+    const { file } = req;
 
     try {
       if (file) {
         const liga = await League.findByPk(id);
-        const logo = liga.logo;
-        const isDefaultPhoto = logo.toLowerCase().includes('imagenotset')
+        const { logo } = liga;
+        const isDefaultPhoto = logo.toLowerCase().includes('imagenotset');
         if (!isDefaultPhoto) {
           await fs.unlink(path.join(`public/${logo}`));
         }
@@ -106,35 +106,52 @@ class AdminController {
       return successResponse(res, 'Logo successfully updated');
     } catch (err) {
       await fs.unlink(path.join(`public/images/league/${file.filename}`));
-      next(err);
+      return next(err);
     }
   }
 
   static async viewListLeague(req, res, next) {
-    const { page = 1, pageSize = 4 } = req.query
-    const limit = +page
-    const offset = +pageSize
+    const { page = 1, pageSize = 4 } = req.query;
+    const limit = +page;
+    const offset = +pageSize;
 
-    // const setRedis = await RedisFunction();
-    // console.log('setRedis')
-    // console.log(setRedis)
-    // console.log(RedisFunction())
     try {
-      const leagues = await League.findAll({
-        offset: (limit - 1) * offset,
-        limit: offset,
-        order: [['createdAt', 'DESC']],
-      });
-      const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
+      console.log('masuk try');
+      const resultAll = await redisClient.get(`league-data-page=${page}-pageSize=${pageSize}`);
+      // const cacheResults = JSON.parse(resultAll);
+      console.log('ada cache');
+      // console.log(resultAll);
 
+      if (!resultAll) {
+        console.log('belum ada cache');
+        const leagues = await League.findAll({
+          offset: (limit - 1) * offset,
+          limit: offset,
+          order: [['createdAt', 'DESC']],
+        });
+        const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
+
+        await redisClient.set(`league-data-page=${page}-pageSize=${pageSize}`, JSON.stringify({
+          page: limit,
+          pageSize: offset,
+          totalData: leaguesData.length,
+          leaguesData
+        }));
+
+        return successResponse(res, 'League list success', 200, {
+          isCache: false,
+          page: limit,
+          pageSize: offset,
+          totalData: leaguesData.length,
+          leaguesData
+        });
+      }
       return successResponse(res, 'League list success', 200, {
-        page: limit,
-        pageSize: offset,
-        totalData: leaguesData.length,
-        leaguesData
+        isCache: true,
+        ...JSON.parse(resultAll)
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -159,12 +176,12 @@ class AdminController {
 
       return successResponse(res, 'League list success', 200, convertObjectToCamelCase(leaguesData.dataValues));
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
   static async viewListAdminLeague(req, res, next) {
-    const { page = 1, pageSize = 4 } = req.query
+    const { page = 1, pageSize = 4 } = req.query;
     try {
       const leagues = await League.findAll(
         {
@@ -176,7 +193,7 @@ class AdminController {
           order: [['createdAt', 'DESC']]
         }
       );
-      const leaguesData = leagues.map((liga => convertObjectToCamelCase(liga.dataValues)))
+      const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
 
       return successResponse(res, 'League list success', 200, {
         page,
@@ -185,7 +202,7 @@ class AdminController {
         leaguesData
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -197,10 +214,11 @@ class AdminController {
             id: req.params.LeagueId
           },
           include: [Team]
-        });
+        }
+      );
       return successResponse(res, 'View Detail League', 200, convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -235,16 +253,6 @@ class AdminController {
             },
             { where: { id: LeagueId } }
           );
-
-          const leagueAfterDecrement = await League.findOne({ where: { id: LeagueId } });
-          if (leagueAfterDecrement.quota_available === 0) {
-            await League.update(
-              {
-                status: 'closed',
-              },
-              { where: { id: LeagueId } }
-            );
-          }
           break;
         case 'Rejected':
           await Team.update(
@@ -254,11 +262,22 @@ class AdminController {
             { where: { id: TeamId } }
           );
           break;
+        default: break;
+      }
+
+      const leagueAfterDecrement = await League.findOne({ where: { id: LeagueId } });
+      if (leagueAfterDecrement.quota_available === 0) {
+        await League.update(
+          {
+            status: 'closed',
+          },
+          { where: { id: LeagueId } }
+        );
       }
 
       return successResponse(res, `${status} by ADMIN League`);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -272,30 +291,30 @@ class AdminController {
 
       if (isFull > 0) {
         return res.status(500).json({
-          message: `Cannot generate match because there is still available quota`
-        })
+          message: 'Cannot generate match because there is still available quota'
+        });
       }
 
-      const isMatchExist = await Fixture.findAll({ where: { LeagueId: id } })
+      const isMatchExist = await Fixture.findAll({ where: { LeagueId: id } });
       if (isMatchExist.length > 0) {
         await Fixture.destroy({
           where: { LeagueId: id },
         });
       }
 
-      const allTeams = await Team.findAll({ where: { LeagueId: id } })
-      const teamsID = allTeams.map(team => team.id)
+      const allTeams = await Team.findAll({ where: { LeagueId: id } });
+      const teamsID = allTeams.map((team) => team.id);
       const shuffleTeams = teamsID.sort(() => Math.random() - 0.5);
       const turnament = robin(shuffleTeams.length, shuffleTeams);
       const genFixture = generateFixture(turnament, id);
-      const fixtureData = getUniqueList(genFixture, 'name')
-      const fixtures = await Fixture.bulkCreate(fixtureData)
+      const fixtureData = getUniqueList(genFixture, 'name');
+      const fixtures = await Fixture.bulkCreate(fixtureData);
       const genMatch = generateMatchDay(genFixture, fixtures);
-      await Match.bulkCreate(genMatch)
+      await Match.bulkCreate(genMatch);
 
       return successResponse(res, 'Generate fixture success', 200, genMatch);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -303,16 +322,16 @@ class AdminController {
     try {
       const fixturesData = await Fixture.findAll({
         where: { LeagueId: req.params.leagueId },
-        attributes: ["name", "status", "LeagueId"],
+        attributes: ['name', 'status', 'LeagueId'],
         include: [{
           model: Match,
-          attributes: ["score", "category"],
+          attributes: ['score', 'category'],
           include: [Team]
         }]
-      })
+      });
       return successResponse(res, 'Show all fixtures', 200, fixturesData);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -320,20 +339,20 @@ class AdminController {
     let teamAStatus = 'draw';
     let teamBStatus = 'draw';
     const UserId = req.userData.id;
-    const { fixturesId, teamAId, teamBId, teamAScore, teamBScore } = req.body
+    const { fixturesId, teamAId, teamBId, teamAScore, teamBScore } = req.body;
     try {
-      const isUserIdAuthorized = await League.findOne({ where: { UserId } })
+      const isUserIdAuthorized = await League.findOne({ where: { UserId } });
       if (!isUserIdAuthorized) {
-        return res.status(401).json({ message: "You are not authorized!" })
+        return res.status(401).json({ message: 'You are not authorized!' });
       }
 
       if (teamAScore > teamBScore) {
-        teamAStatus = 'win'
-        teamBStatus = 'lose'
+        teamAStatus = 'win';
+        teamBStatus = 'lose';
       }
       if (teamAScore < teamBScore) {
-        teamAStatus = 'lose'
-        teamBStatus = 'win'
+        teamAStatus = 'lose';
+        teamBStatus = 'win';
       }
 
       await Promise.all([
@@ -343,39 +362,43 @@ class AdminController {
           },
           { where: { id: fixturesId } }
         ),
-        Match.update({
-          score: teamAScore,
-          status: teamAStatus
-        },
+        Match.update(
+          {
+            score: teamAScore,
+            status: teamAStatus
+          },
           { where: { FixtureId: fixturesId, TeamId: teamAId } }
         ),
-        Match.update({
-          score: teamBScore,
-          status: teamBStatus
-        },
+        Match.update(
+          {
+            score: teamBScore,
+            status: teamBStatus
+          },
           { where: { FixtureId: fixturesId, TeamId: teamBId } }
         )
       ]);
 
       return successResponse(res, 'Score has been updated');
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
   static async deleteLeague(req, res, next) {
-    const id = req.params.id;
+    const { id } = req.params;
     try {
       const { UserId, logo } = await League.findByPk(id);
       if (UserId === req.userData.id) {
         const destroyLeague = await League.destroy({ where: { id, UserId } });
-        if (destroyLeague === 0) return res.status(404).json({
-          message: `League is not found`
-        })
+        if (destroyLeague === 0) {
+          return res.status(404).json({
+            message: 'League is not found'
+          });
+        }
 
-        const fixturesDatta = await Fixture.findAll({ where: { LeagueId: id } })
-        const fixturesID = fixturesDatta.map(fix => fix.id)
-        const isDefaultPhoto = logo.toLowerCase().includes('imagenotset')
+        const fixturesDatta = await Fixture.findAll({ where: { LeagueId: id } });
+        const fixturesID = fixturesDatta.map((fix) => fix.id);
+        const isDefaultPhoto = logo.toLowerCase().includes('imagenotset');
         if (!isDefaultPhoto) {
           await fs.unlink(path.join(`public/${logo}`));
         }
@@ -390,9 +413,9 @@ class AdminController {
 
       return res.status(403).json({
         message: 'Your forbidden'
-      })
+      });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 }

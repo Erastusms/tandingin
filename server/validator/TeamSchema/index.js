@@ -1,6 +1,6 @@
-const { CreateSchema } = require('./CreateSchema')
-const { JoinLeagueSchema } = require('./JoinLeagueSchema')
+const { CreateSchema } = require('./CreateSchema');
+const { JoinLeagueSchema } = require('./JoinLeagueSchema');
 
 module.exports = {
-    CreateSchema, JoinLeagueSchema
-}
+  CreateSchema, JoinLeagueSchema
+};

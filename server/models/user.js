@@ -1,9 +1,8 @@
-'use strict';
 const {
   Model
 } = require('sequelize');
-const { encrypter } = require("../helpers/bcrypt");
 const { v4: uuidv4 } = require('uuid');
+const { encrypter } = require('../helpers/bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {

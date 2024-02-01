@@ -1,47 +1,43 @@
-// const { createClient } = require('redis');
-// const { Schema, EntityId, Repository } = require('redis-om')
-// // const { leagueSchema } = require('../validator/RedisSchema/League')
+const redis = require('redis');
+// class CacheService {
+//   constructor() {
+//     this._client = redis.createClient({
+//       socket: {
+//         host: process.env.REDIS_SERVER,
+//       },
+//     });
 
-// const albumSchema = new Schema('album', {
-//     artist: { type: 'string' },
-//     title: { type: 'string' },
-//     year: { type: 'number' },
-//     genres: { type: 'string[]' },
-//     songDurations: { type: 'number[]' },
-//     outOfPublication: { type: 'boolean' }
-// }, {
-//     dataStructure: 'JSON'
-// })
+//     this._client.on('error', (error) => {
+//       console.error(error);
+//     });
 
-// const RedisFunction = async () => {
+//     this._client.connect();
+//   }
 
-//     const redis = createClient();
-//     redis.on('error', (err) => console.log('Redis Client Error', err));
-//     await redis.connect();
+//   async set(key, value, expirationInSecond = 1800) {
+//     await this._client.set(key, value, {
+//       EX: expirationInSecond,
+//     });
+//   }
 
-//     console.log('masuk redis')
+//   async get(key) {
+//     const result = await this._client.get(key);
+//     return result;
+//   }
 
-//     // const aString = await redis.ping() // 'PONG'
-//     // const aNumber = await redis.hSet('foo', 'alfa', '42', 'bravo', '23') // 2
-//     // const aHash = await redis.hGetAll('foo') // { alfa: '42', bravo: '23' }
-
-//     // console.log('aHash') // { alfa: '42', bravo: '23' }
-//     // console.log(aHash)
-//     const albumRepository = new Repository(albumSchema, redis)
-//     let album = {
-//         artist: "Mushroomhead",
-//         title: "The Righteous & The Butterfly",
-//         year: 2014,
-//         genres: ['metal'],
-//         songDurations: [204, 290, 196, 210, 211, 105, 244, 245, 209, 252, 259, 200, 215, 219],
-//         outOfPublication: true
-//     }
-
-//     album = await albumRepository.save(album)
-//     console.log('album[EntityId]')
-//     console.log(album)
-
-//     return album;
+//   delete(key) { return this._client.del(key); }
 // }
 
-// module.exports = { RedisFunction };
+// module.exports = CacheService;
+
+let redisClient;
+
+(async () => {
+  redisClient = redis.createClient();
+
+  redisClient.on('error', (error) => console.error(`Error : ${error}`));
+
+  await redisClient.connect();
+})();
+
+module.exports = redisClient;

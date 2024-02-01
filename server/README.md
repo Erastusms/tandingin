@@ -8,3 +8,4 @@ FOOTNOTE:
 - npx sequelize-cli init
 - npx sequelize-cli model:generate --name User --attributes first_name:string,last_name:string
 - npx sequelize-cli db:migrate
+- see cache-redis: powershell -> memurai-cli

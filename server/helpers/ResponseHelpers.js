@@ -42,18 +42,11 @@ const keyObjectSubtitution = (obj) => {
   return newData;
 };
 
-const convertObjectToSnakeCase = (obj) => {
-  return _.mapKeys(obj, (v, k) => _.snakeCase(k))
+const convertObjectToSnakeCase = (obj) => _.mapKeys(obj, (v, k) => _.snakeCase(k));
 
-}
+const convertObjectToCamelCase = (obj) => _.mapKeys(obj, (v, k) => _.camelCase(k));
 
-const convertObjectToCamelCase = (obj) => {
-  return _.mapKeys(obj, (v, k) => _.camelCase(k))
-}
-
-const getUniqueList = (arr, key) => {
-  return [...new Map(arr.map(item => [item[key], item])).values()]
-}
+const getUniqueList = (arr, key) => [...new Map(arr.map((item) => [item[key], item])).values()];
 
 module.exports = {
   keyObjectSubtitution, convertObjectToSnakeCase, convertObjectToCamelCase, getUniqueList
