@@ -11,7 +11,6 @@ const { authorizationUrl, getSyncGoogle } = require('../helpers/GoogleHelpers');
 // const fs = require("fs-extra");
 // const path = require("path");
 // const randomstring = require("randomstring");
-const { personRepository } = require('../middlewares/person');
 
 class UserController {
   static async register(req, res, next) {
@@ -200,15 +199,6 @@ class UserController {
         League: dataLeague.map((data) => convertObjectToCamelCase(data.dataValues)),
         Team: dataTeam.map((data) => convertObjectToCamelCase(data.dataValues))
       });
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  static async getRedis(req, res, next) {
-    try {
-      const person = await personRepository.createAndSave(req.body);
-      res.send(person);
     } catch (err) {
       next(err);
     }

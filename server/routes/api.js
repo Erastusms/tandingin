@@ -34,6 +34,5 @@ ApiRouter.get(
 );
 
 ApiRouter.get('/get', userController.getUser);
-ApiRouter.get('/tes/redis', userController.getRedis);
 
 module.exports = ApiRouter;

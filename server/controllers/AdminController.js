@@ -1,6 +1,6 @@
 const robin = require('roundrobin');
-const _ = require('lodash');
-const fs = require('fs-extra');
+// const _ = require('lodash');
+const fs = require('fs');
 const path = require('path');
 const { League, User, Team, Fixture, Match } = require('../models');
 const {
@@ -10,7 +10,7 @@ const {
 } = require('../helpers/ResponseHelpers');
 const { successResponse } = require('../response');
 const { generateFixture, generateMatchDay } = require('../helpers/fixtureGenerator');
-// const { RedisFunction } = require('../middlewares/redis');
+const redisClient = require('../middlewares/redis');
 
 class AdminController {
   static async viewDashboard(req, res, next) {
@@ -26,7 +26,7 @@ class AdminController {
         leagueData
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -61,7 +61,7 @@ class AdminController {
 
       return successResponse(res, 'League successfully created', 201);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -79,7 +79,7 @@ class AdminController {
 
       return successResponse(res, 'League successfully updated');
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -106,7 +106,7 @@ class AdminController {
       return successResponse(res, 'Logo successfully updated');
     } catch (err) {
       await fs.unlink(path.join(`public/images/league/${file.filename}`));
-      next(err);
+      return next(err);
     }
   }
 
@@ -115,26 +115,43 @@ class AdminController {
     const limit = +page;
     const offset = +pageSize;
 
-    // const setRedis = await RedisFunction();
-    // console.log('setRedis')
-    // console.log(setRedis)
-    // console.log(RedisFunction())
     try {
-      const leagues = await League.findAll({
-        offset: (limit - 1) * offset,
-        limit: offset,
-        order: [['createdAt', 'DESC']],
-      });
-      const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
+      console.log('masuk try');
+      const resultAll = await redisClient.get(`league-data-page=${page}-pageSize=${pageSize}`);
+      // const cacheResults = JSON.parse(resultAll);
+      console.log('ada cache');
+      // console.log(resultAll);
 
+      if (!resultAll) {
+        console.log('belum ada cache');
+        const leagues = await League.findAll({
+          offset: (limit - 1) * offset,
+          limit: offset,
+          order: [['createdAt', 'DESC']],
+        });
+        const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
+
+        await redisClient.set(`league-data-page=${page}-pageSize=${pageSize}`, JSON.stringify({
+          page: limit,
+          pageSize: offset,
+          totalData: leaguesData.length,
+          leaguesData
+        }));
+
+        return successResponse(res, 'League list success', 200, {
+          isCache: false,
+          page: limit,
+          pageSize: offset,
+          totalData: leaguesData.length,
+          leaguesData
+        });
+      }
       return successResponse(res, 'League list success', 200, {
-        page: limit,
-        pageSize: offset,
-        totalData: leaguesData.length,
-        leaguesData
+        isCache: true,
+        ...JSON.parse(resultAll)
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -159,7 +176,7 @@ class AdminController {
 
       return successResponse(res, 'League list success', 200, convertObjectToCamelCase(leaguesData.dataValues));
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -185,7 +202,7 @@ class AdminController {
         leaguesData
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -201,7 +218,7 @@ class AdminController {
       );
       return successResponse(res, 'View Detail League', 200, convertObjectToCamelCase(leagues.dataValues));
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -236,16 +253,6 @@ class AdminController {
             },
             { where: { id: LeagueId } }
           );
-
-          const leagueAfterDecrement = await League.findOne({ where: { id: LeagueId } });
-          if (leagueAfterDecrement.quota_available === 0) {
-            await League.update(
-              {
-                status: 'closed',
-              },
-              { where: { id: LeagueId } }
-            );
-          }
           break;
         case 'Rejected':
           await Team.update(
@@ -255,11 +262,22 @@ class AdminController {
             { where: { id: TeamId } }
           );
           break;
+        default: break;
+      }
+
+      const leagueAfterDecrement = await League.findOne({ where: { id: LeagueId } });
+      if (leagueAfterDecrement.quota_available === 0) {
+        await League.update(
+          {
+            status: 'closed',
+          },
+          { where: { id: LeagueId } }
+        );
       }
 
       return successResponse(res, `${status} by ADMIN League`);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -296,7 +314,7 @@ class AdminController {
 
       return successResponse(res, 'Generate fixture success', 200, genMatch);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -313,7 +331,7 @@ class AdminController {
       });
       return successResponse(res, 'Show all fixtures', 200, fixturesData);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -362,7 +380,7 @@ class AdminController {
 
       return successResponse(res, 'Score has been updated');
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -375,7 +393,7 @@ class AdminController {
         if (destroyLeague === 0) {
           return res.status(404).json({
             message: 'League is not found'
-          }); 
+          });
         }
 
         const fixturesDatta = await Fixture.findAll({ where: { LeagueId: id } });
@@ -397,7 +415,7 @@ class AdminController {
         message: 'Your forbidden'
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 }

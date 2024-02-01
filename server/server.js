@@ -29,7 +29,7 @@ app.use((err, req, res, next) => {
   if (err) {
     console.error(err.message);
     // Set 500 server code error if statuscode not set
-    if (!err.statusCode) { err.statusCode = 500; } 
+    if (!err.statusCode) { err.statusCode = 500; }
     console.log(err);
     return res.status(err.statusCode).send({
       statusCode: err.statusCode,
@@ -39,6 +39,7 @@ app.use((err, req, res, next) => {
 
   return next();
 });
+
 app.listen(port, () => {
   console.log('Server is running in port: http://localhost:5000');
 });
