@@ -116,40 +116,38 @@ class AdminController {
     const offset = +pageSize;
 
     try {
-      console.log('masuk try');
-      const resultAll = await redisClient.get(`league-data-page=${page}-pageSize=${pageSize}`);
-      // const cacheResults = JSON.parse(resultAll);
-      console.log('ada cache');
-      // console.log(resultAll);
+      // console.log('masuk try');
+      // const resultAll = await redisClient.get(`league-data-page=${page}-pageSize=${pageSize}`);
+      // console.log('ada cache');
 
-      if (!resultAll) {
-        console.log('belum ada cache');
-        const leagues = await League.findAll({
-          offset: (limit - 1) * offset,
-          limit: offset,
-          order: [['createdAt', 'DESC']],
-        });
-        const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
-
-        await redisClient.set(`league-data-page=${page}-pageSize=${pageSize}`, JSON.stringify({
-          page: limit,
-          pageSize: offset,
-          totalData: leaguesData.length,
-          leaguesData
-        }));
-
-        return successResponse(res, 'League list success', 200, {
-          isCache: false,
-          page: limit,
-          pageSize: offset,
-          totalData: leaguesData.length,
-          leaguesData
-        });
-      }
-      return successResponse(res, 'League list success', 200, {
-        isCache: true,
-        ...JSON.parse(resultAll)
+      // if (!resultAll) {
+      // console.log('belum ada cache');
+      const leagues = await League.findAll({
+        offset: (limit - 1) * offset,
+        limit: offset,
+        order: [['createdAt', 'DESC']],
       });
+      const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
+
+      // await redisClient.set(`league-data-page=${page}-pageSize=${pageSize}`, JSON.stringify({
+      //   page: limit,
+      //   pageSize: offset,
+      //   totalData: leaguesData.length,
+      //   leaguesData
+      // }));
+
+      return successResponse(res, 'League list success', 200, {
+        isCache: false,
+        page: limit,
+        pageSize: offset,
+        totalData: leaguesData.length,
+        leaguesData
+      });
+      // }
+      // return successResponse(res, 'League list success', 200, {
+      //   isCache: true,
+      //   ...JSON.parse(resultAll)
+      // });
     } catch (err) {
       return next(err);
     }
