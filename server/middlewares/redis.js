@@ -35,13 +35,13 @@ const redis = require('redis');
 let redisClient;
 
 (async () => {
-  redisClient = redis.createClient();
+  redisClient = redis.createClient({
+    url: process.env.REDIS_URL || 'redis://127.0.0.1:6379'
+  });
 
   redisClient.on('error', (error) => console.error(`Error : ${error}`));
 
-  await redisClient.connect({
-    url: process.env.REDIS_URL
-  });
+  await redisClient.connect();
 })();
 
 module.exports = redisClient;
