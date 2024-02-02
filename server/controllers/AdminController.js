@@ -114,40 +114,41 @@ class AdminController {
     const { page = 1, pageSize = 4 } = req.query;
     const limit = +page;
     const offset = +pageSize;
+    const startIndex = (limit - 1) * offset;
+    const endIndex = limit * offset;
 
     try {
-      // console.log('masuk try');
-      // const resultAll = await redisClient.get(`league-data-page=${page}-pageSize=${pageSize}`);
-      // console.log('ada cache');
+      const cacheData = await redisClient.get('leagues-data');
 
-      // if (!resultAll) {
-      // console.log('belum ada cache');
+      if (cacheData) {
+        const dataJSON = JSON.parse(cacheData);
+        const leaguesData = dataJSON.slice(startIndex, endIndex);
+
+        return successResponse(res, 'League list success', 200, {
+          isCache: true,
+          page: limit,
+          pageSize: offset,
+          totalData: leaguesData.length,
+          leaguesData
+        });
+      }
+
       const leagues = await League.findAll({
-        offset: (limit - 1) * offset,
-        limit: offset,
+        // offset: (limit - 1) * offset,
+        // limit: offset,
         order: [['createdAt', 'DESC']],
       });
       const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
 
-      // await redisClient.set(`league-data-page=${page}-pageSize=${pageSize}`, JSON.stringify({
-      //   page: limit,
-      //   pageSize: offset,
-      //   totalData: leaguesData.length,
-      //   leaguesData
-      // }));
+      await redisClient.set('leagues-data', JSON.stringify(leaguesData));
 
       return successResponse(res, 'League list success', 200, {
         isCache: false,
         page: limit,
         pageSize: offset,
-        totalData: leaguesData.length,
+        totalData: leaguesData.slice(startIndex, endIndex).length,
         leaguesData
       });
-      // }
-      // return successResponse(res, 'League list success', 200, {
-      //   isCache: true,
-      //   ...JSON.parse(resultAll)
-      // });
     } catch (err) {
       return next(err);
     }
