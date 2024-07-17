@@ -21,7 +21,7 @@ class MemberController {
 
       return successResponse(res, "Team successfully created", 201);
     } catch (err) {
-      return next(err);;
+      return next(err);
     }
   }
 
@@ -78,7 +78,7 @@ class MemberController {
 
       return successResponse(res, "waiting approval from admin league");
     } catch (err) {
-      return next(err);;
+      return next(err);
     }
   }
 
@@ -111,7 +111,7 @@ class MemberController {
 
       return successResponse(res, "Show Match", 200, matchDataTeam);
     } catch (err) {
-      return next(err);;
+      return next(err);
     }
   }
 
@@ -121,7 +121,7 @@ class MemberController {
 
       return successResponse(res, "Show Data", 200, dataTeam);
     } catch (err) {
-      return next(err);;
+      return next(err);
     }
   }
 
@@ -135,7 +135,7 @@ class MemberController {
         dataTeam,
       });
     } catch (err) {
-      return next(err);;
+      return next(err);
     }
   }
 
@@ -157,7 +157,7 @@ class MemberController {
         message: "Your forbidden",
       });
     } catch (err) {
-      return next(err);;
+      return next(err);
     }
   }
 }

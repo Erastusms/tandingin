@@ -10,7 +10,7 @@ const {
 } = require("../helpers/ResponseHelpers");
 const { successResponse } = require("../response");
 const { generateFixture, generateMatchDay } = require("../helpers/fixtureGenerator");
-const redisClient = require("../middlewares/redis");
+// const redisClient = require("../middlewares/redis");
 
 class AdminController {
   static async viewDashboard(req, res, next) {
@@ -118,20 +118,20 @@ class AdminController {
     const endIndex = limit * offset;
 
     try {
-      const cacheData = await redisClient.get("leagues-data");
+      // const cacheData = await redisClient.get("leagues-data");
 
-      if (cacheData) {
-        const dataJSON = JSON.parse(cacheData);
-        const leaguesData = dataJSON.slice(startIndex, endIndex);
+      // if (cacheData) {
+      //   const dataJSON = JSON.parse(cacheData);
+      //   const leaguesData = dataJSON.slice(startIndex, endIndex);
 
-        return successResponse(res, "League list success", 200, {
-          isCache: true,
-          page: limit,
-          pageSize: offset,
-          totalData: leaguesData.length,
-          leaguesData
-        });
-      }
+      //   return successResponse(res, "League list success", 200, {
+      //     isCache: true,
+      //     page: limit,
+      //     pageSize: offset,
+      //     totalData: leaguesData.length,
+      //     leaguesData
+      //   });
+      // }
 
       const leagues = await League.findAll({
         // offset: (limit - 1) * offset,
@@ -140,7 +140,7 @@ class AdminController {
       });
       const leaguesData = leagues.map(((liga) => convertObjectToCamelCase(liga.dataValues)));
 
-      await redisClient.set("leagues-data", JSON.stringify(leaguesData));
+      // await redisClient.set("leagues-data", JSON.stringify(leaguesData));
 
       return successResponse(res, "League list success", 200, {
         isCache: false,
