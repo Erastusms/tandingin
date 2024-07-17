@@ -17,7 +17,14 @@
         "fullname": "Orang AOP",
         "username": "aophunter",
         "email": "aophunter@gmail.com",
-        "password": "adminaop",
+        "password": "aophunter",
         "role": "MEMBER"
+    },
+    {
+        "fullname": "Admin",
+        "username": "admin",
+        "email": "admintandingin@gmail.com",
+        "password": "adminaop",
+        "role": "ADMIN"
     }
 ]
