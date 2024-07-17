@@ -1,6 +1,6 @@
 const {
   Model
-} = require('sequelize');
+} = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Fixture extends Model {
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     LeagueId: DataTypes.UUID,
   }, {
     sequelize,
-    modelName: 'Fixture',
+    modelName: "Fixture",
   });
   return Fixture;
 };

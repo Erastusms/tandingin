@@ -1,13 +1,13 @@
-const { Op } = require('sequelize');
-const { User, League, Team } = require('../models');
-const { decrypter, encrypter } = require('../helpers/bcrypt');
-const { tokenGenerator } = require('../helpers/jwt');
+const { Op } = require("sequelize");
+const { User, League, Team } = require("../models");
+const { decrypter, encrypter } = require("../helpers/bcrypt");
+const { tokenGenerator } = require("../helpers/jwt");
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
-} = require('../helpers/ResponseHelpers');
-const { successResponse } = require('../response');
-const { authorizationUrl, getSyncGoogle } = require('../helpers/GoogleHelpers');
+} = require("../helpers/ResponseHelpers");
+const { successResponse } = require("../response");
+const { authorizationUrl, getSyncGoogle } = require("../helpers/GoogleHelpers");
 // const fs = require("fs-extra");
 // const path = require("path");
 // const randomstring = require("randomstring");
@@ -21,16 +21,16 @@ class UserController {
 
       if (findEmail) {
         return res.status(403).json({
-          message: 'Email already exist!',
+          message: "Email already exist!",
         });
       }
 
       await User.create({
         ...req.body
       });
-      return successResponse(res, 'user successfully created', 201);
+      return successResponse(res, "user successfully created", 201);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -39,7 +39,7 @@ class UserController {
       const data = await User.findAll({});
       res.status(200).json(data);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -52,21 +52,21 @@ class UserController {
 
       if (user) {
         if (decrypter(password, user.password)) {
-          return successResponse(res, 'You are successfully logged in', 200, {
+          return successResponse(res, "You are successfully logged in", 200, {
             access_token: tokenGenerator(user),
             role: user.role
           });
         }
         return res.status(403).json({
-          message: 'Password is Invalid!',
+          message: "Password is Invalid!",
         });
       }
 
       return res.status(404).json({
-        message: 'User not found!',
+        message: "User not found!",
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -87,8 +87,8 @@ class UserController {
         fullname: name,
         username: given_name,
         email,
-        password: 'not set',
-        role: 'MEMBER',
+        password: "not set",
+        role: "MEMBER",
       });
     }
 
@@ -139,7 +139,7 @@ class UserController {
     //     },
     //     token: token
     // })
-    return successResponse(res, 'Successfully login!', {
+    return successResponse(res, "Successfully login!", {
       access_token: tokenGenerator(user),
       role: user.role
     });
@@ -151,7 +151,7 @@ class UserController {
       const users = await User.findByPk(id);
       return res.status(200).json(users);
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -168,11 +168,11 @@ class UserController {
 
       return res.status(200).json({
         status: 200,
-        message: 'User data has been updated!',
+        message: "User data has been updated!",
         user: userAfterUpdate,
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -195,12 +195,12 @@ class UserController {
         }
       });
 
-      return successResponse(res, 'Show Data', 200, {
+      return successResponse(res, "Show Data", 200, {
         League: dataLeague.map((data) => convertObjectToCamelCase(data.dataValues)),
         Team: dataTeam.map((data) => convertObjectToCamelCase(data.dataValues))
       });
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 }

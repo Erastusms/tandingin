@@ -1,4 +1,4 @@
-const { failActionHandler } = require('./ValidationHelper');
+const { failActionHandler } = require("./ValidationHelper");
 
 const validator = (schema, property) => (req, res, next) => {
   // const { error } = schema.validate(req[property]);

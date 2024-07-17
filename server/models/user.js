@@ -1,8 +1,8 @@
 const {
   Model
-} = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
-const { encrypter } = require('../helpers/bcrypt');
+} = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
+const { encrypter } = require("../helpers/bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Please enter your fullname'
+          msg: "Please enter your fullname"
         }
       }
     },
@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Please enter your username'
+          msg: "Please enter your username"
         }
       }
     },
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Email is required'
+          msg: "Email is required"
         }
       }
     },
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Password is required'
+          msg: "Password is required"
         }
       }
     },
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Role is required'
+          msg: "Role is required"
         }
       }
     },
@@ -75,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     sequelize,
-    modelName: 'User',
+    modelName: "User",
   });
   return User;
 };

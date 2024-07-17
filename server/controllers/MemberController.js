@@ -1,29 +1,27 @@
-const _ = require('lodash');
-const { League, User, Team, Fixture, Match } = require('../models');
+const { League, User, Team, Fixture, Match } = require("../models");
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
-} = require('../helpers/ResponseHelpers');
-const { successResponse } = require('../response');
+} = require("../helpers/ResponseHelpers");
+const { successResponse } = require("../response");
 
 class MemberController {
   static async create(req, res, next) {
     try {
       const { file } = req;
       const UserId = req.userData.id;
-
       const { name, shortname } = req.body;
 
       await Team.create({
         name,
         shortname,
         UserId,
-        logo: file ? `images/team/${file.filename}` : 'images/ImageNotSet.png',
+        logo: file ? `images/team/${file.filename}` : "images/ImageNotSet.png",
       });
 
-      return successResponse(res, 'Team successfully created', 201);
+      return successResponse(res, "Team successfully created", 201);
     } catch (err) {
-      next(err);
+      return next(err);;
     }
   }
 
@@ -36,7 +34,7 @@ class MemberController {
 
       if (teamData.LeagueId) {
         return res.status(403).json({
-          message: 'This team are joining another league!',
+          message: "This team are joining another league!",
         });
       }
 
@@ -46,7 +44,7 @@ class MemberController {
 
       if (!leagueData) {
         return res.status(403).json({
-          message: 'League does not exist!',
+          message: "League does not exist!",
         });
       }
       const { quota_available, is_locked, key: leagueKey } = leagueData;
@@ -54,33 +52,33 @@ class MemberController {
       if (is_locked) {
         if (!key) {
           return res.status(400).json({
-            message: 'Key is required',
+            message: "Key is required",
           });
         }
         if (key !== leagueKey) {
           return res.status(400).json({
-            message: 'Key is incorrect',
+            message: "Key is incorrect",
           });
         }
       }
 
       if (quota_available === 0) {
         return res.status(400).json({
-          message: 'Quota is full',
+          message: "Quota is full",
         });
       }
 
       await Team.update(
         {
-          status: 'Pending',
+          status: "Pending",
           LeagueId,
         },
         { where: { id: TeamId } }
       );
 
-      return successResponse(res, 'waiting approval from admin league');
+      return successResponse(res, "waiting approval from admin league");
     } catch (err) {
-      next(err);
+      return next(err);;
     }
   }
 
@@ -91,25 +89,29 @@ class MemberController {
       });
 
       const matchDataTeam = await Fixture.findAll({
-        attributes: ['name', 'status', 'LeagueId'],
+        attributes: ["name", "status", "LeagueId"],
         where: { id: fixturesData.map((fix) => fix.FixtureId) },
-        include: [{
-          model: Match,
-          attributes: ['id', 'status', 'score', 'category'],
-          include: [{
-            model: Team,
-            attributes: ['id', 'name', 'shortname', 'logo']
-          }],
-        }],
+        include: [
+          {
+            model: Match,
+            attributes: ["id", "status", "score", "category"],
+            include: [
+              {
+                model: Team,
+                attributes: ["id", "name", "shortname", "logo"],
+              },
+            ],
+          },
+        ],
         order: [
-          ['name', 'ASC'],
-          [Match, 'id', 'ASC'],
+          ["name", "ASC"],
+          [Match, "id", "ASC"],
         ],
       });
 
-      return successResponse(res, 'Show Match', 200, matchDataTeam);
+      return successResponse(res, "Show Match", 200, matchDataTeam);
     } catch (err) {
-      next(err);
+      return next(err);;
     }
   }
 
@@ -117,9 +119,9 @@ class MemberController {
     try {
       const dataTeam = await Team.findAll({});
 
-      return successResponse(res, 'Show Data', 200, dataTeam);
+      return successResponse(res, "Show Data", 200, dataTeam);
     } catch (err) {
-      next(err);
+      return next(err);;
     }
   }
 
@@ -128,12 +130,12 @@ class MemberController {
     try {
       const dataTeam = await Team.findAll({ where: { UserId } });
 
-      return successResponse(res, 'Show Data', 200, {
+      return successResponse(res, "Show Data", 200, {
         totalData: dataTeam.length,
-        dataTeam
+        dataTeam,
       });
     } catch (err) {
-      next(err);
+      return next(err);;
     }
   }
 
@@ -145,17 +147,17 @@ class MemberController {
         const destroyTeam = await Team.destroy({ where: { id, UserId } });
         if (destroyTeam === 0) {
           return res.status(404).json({
-            message: 'Team is not found'
-          }); 
+            message: "Team is not found",
+          });
         }
-        return successResponse(res, 'Team has been deleted');
+        return successResponse(res, "Team has been deleted");
       }
 
       return res.status(403).json({
-        message: 'Your forbidden'
+        message: "Your forbidden",
       });
     } catch (err) {
-      next(err);
+      return next(err);;
     }
   }
 }

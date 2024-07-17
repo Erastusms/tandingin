@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const UpdateUserSchema = Joi.object({
   fullname: Joi.string().required(),

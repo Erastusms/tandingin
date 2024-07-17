@@ -1,7 +1,7 @@
 const {
   Model
-} = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
+} = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
 
 module.exports = (sequelize, DataTypes) => {
   class Team extends Model {
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     sequelize,
-    modelName: 'Team',
+    modelName: "Team",
   });
   return Team;
 };

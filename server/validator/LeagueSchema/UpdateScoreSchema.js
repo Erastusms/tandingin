@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const UpdateScoreSchema = Joi.object({
   fixturesId: Joi.string().required(),

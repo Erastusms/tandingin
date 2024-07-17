@@ -1,6 +1,6 @@
 const {
   Model
-} = require('sequelize');
+} = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Match extends Model {
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     FixtureId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Match',
+    modelName: "Match",
   });
   return Match;
 };
