@@ -7,38 +7,38 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       shortname: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       logo: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       status: {
-        type: Sequelize.STRING
-      },
-      UserId: {
-        type: Sequelize.UUID
+        type: Sequelize.STRING,
       },
       LeagueId: {
         type: Sequelize.UUID,
         allowNull: true,
       },
+      UserId: {
+        type: Sequelize.UUID,
+      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Teams");
-  }
+  },
 };

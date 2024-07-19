@@ -84,30 +84,25 @@ class MemberController {
 
   static async viewMatch(req, res, next) {
     try {
-      const fixturesData = await Match.findAll({
-        where: { TeamId: req.params.teamId },
-      });
-
-      const matchDataTeam = await Fixture.findAll({
-        attributes: ["name", "status", "LeagueId"],
-        where: { id: fixturesData.map((fix) => fix.FixtureId) },
+      const matches = await Match.findAll({
         include: [
           {
-            model: Match,
-            attributes: ["id", "status", "score", "category"],
-            include: [
-              {
-                model: Team,
-                attributes: ["id", "name", "shortname", "logo"],
-              },
-            ],
+            model: Team,
+            // through: { attributes: ["isHomeTeam"] },
+            where: { id: req.params.TeamId },
           },
         ],
-        order: [
-          ["name", "ASC"],
-          [Match, "id", "ASC"],
-        ],
       });
+
+      return matches.map((match) => ({
+        matchDate: match.match_date,
+        leagueId: match.LeagueId,
+        teams: match.Teams.map((team) => ({
+          teamName: team.name,
+          // isHomeTeam: team.TeamMatch.isHomeTeam,
+          logo: team.logo,
+        })),
+      }));
 
       return successResponse(res, "Show Match", 200, matchDataTeam);
     } catch (err) {

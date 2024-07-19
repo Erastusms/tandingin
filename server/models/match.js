@@ -1,6 +1,5 @@
-const {
-  Model
-} = require("sequelize");
+const { Model } = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
 
 module.exports = (sequelize, DataTypes) => {
   class Match extends Model {
@@ -11,19 +10,38 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Match.belongsTo(models.Team);
-      Match.belongsTo(models.Fixture);
+      Match.belongsTo(models.League, { foreignKey: "LeagueId" });
+      Match.belongsToMany(models.Team, {
+        through: models.TeamMatch,
+        foreignKey: "MatchId",
+        otherKey: "TeamId",
+      });
     }
   }
-  Match.init({
-    score: DataTypes.INTEGER,
-    status: DataTypes.STRING,
-    category: DataTypes.STRING,
-    TeamId: DataTypes.UUID,
-    FixtureId: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: "Match",
-  });
+  Match.init(
+    {
+      match_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      LeagueId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "Leagues",
+          key: "id",
+        },
+      },
+    },
+    {
+      hooks: {
+        beforeCreate: (match, options) => {
+          match.id = uuidv4();
+        },
+      },
+      sequelize,
+      modelName: "Match",
+    }
+  );
   return Match;
 };

@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       League.belongsTo(models.User);
-      League.hasMany(models.Team);
-      League.hasMany(models.Fixture);
+      League.hasMany(models.Team, { foreignKey: 'LeagueId' });
+      League.hasMany(models.Match, { foreignKey: 'LeagueId' });
     }
   }
   League.init({
