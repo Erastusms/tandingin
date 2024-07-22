@@ -2,7 +2,8 @@ import {
 
     CREATE_LEAGUE,
     SET_MESSAGE,
-    DELETE_LEAGUE
+    DELETE_LEAGUE,
+    UPDATE_LEAGUE,
 
   } from "./types";
   
@@ -36,5 +37,20 @@ export const deleteLeague = (id) => async (dispatch) => {
     });
   } catch (err) {
     console.log(err);
+  }
+};
+
+export const updateLeague = (id, data) => async (dispatch) => {
+  try {
+    const res = await leagueService.update(id, data);
+
+    dispatch({
+      type: UPDATE_LEAGUE,
+      payload: data,
+    });
+
+    return Promise.resolve(res.data);
+  } catch (err) {
+    return Promise.reject(err);
   }
 };

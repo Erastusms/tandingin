@@ -1,8 +1,8 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "https://tandingin-production.up.railway.app/api/v1/";
-const API_ALL = "https://tandingin-production.up.railway.app/";
+const API_URL = "http://localhost:5000/api/v1/";
+const API_ALL = "http://localhost:5000/";
 
 
 // const getPublicContent = () => {

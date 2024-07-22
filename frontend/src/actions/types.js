@@ -11,3 +11,5 @@ export const CLEAR_MESSAGE = "CLEAR_MESSAGE";
 export const CREATE_LEAGUE = "CREATE_LEAGUE";
 export const CREATE_FAIL = "CREATE_FAIL";
 export const DELETE_LEAGUE = "DELETE_LEAGUE";
+
+export const UPDATE_LEAGUE = "UPDATE_LEAGUE";

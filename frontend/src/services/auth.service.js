@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const API_URL = "http://localhost:8080/api/auth/";
-const API_URL = "https://tandingin-production.up.railway.app/api/v1/";
+const API_URL = "http://localhost:5000/api/v1/";
 
 
 const register = (fullname, username, email, password, reTypePassword, role) => {
