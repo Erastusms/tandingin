@@ -1,6 +1,6 @@
-require('dotenv').config();
+// require("dotenv").config();
 
-const redis = require('redis');
+// const redis = require("redis");
 // class CacheService {
 //   constructor() {
 //     this._client = redis.createClient({
@@ -32,16 +32,16 @@ const redis = require('redis');
 
 // module.exports = CacheService;
 
-let redisClient;
+// let redisClient;
 
-(async () => {
-  redisClient = redis.createClient({
-    url: process.env.REDIS_URL || 'redis://127.0.0.1:6379'
-  });
+// (async () => {
+//   redisClient = redis.createClient({
+//     url: process.env.REDIS_URL || "redis://127.0.0.1:6379"
+//   });
 
-  redisClient.on('error', (error) => console.error(`Error : ${error}`));
+//   redisClient.on("error", (error) => console.error(`Error : ${error}`));
 
-  await redisClient.connect();
-})();
+//   await redisClient.connect();
+// })();
 
-module.exports = redisClient;
+// module.exports = redisClient;

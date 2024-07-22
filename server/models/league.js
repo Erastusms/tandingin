@@ -1,7 +1,7 @@
 const {
   Model
-} = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
+} = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
 
 module.exports = (sequelize, DataTypes) => {
   class League extends Model {
@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       League.belongsTo(models.User);
-      League.hasMany(models.Team);
-      League.hasMany(models.Fixture);
+      League.hasMany(models.Team, { foreignKey: 'LeagueId' });
+      League.hasMany(models.Match, { foreignKey: 'LeagueId' });
     }
   }
   League.init({
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     sequelize,
-    modelName: 'League',
+    modelName: "League",
   });
   return League;
 };

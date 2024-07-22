@@ -1,7 +1,5 @@
-const {
-  Model
-} = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
+const { Model } = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
 
 module.exports = (sequelize, DataTypes) => {
   class Team extends Model {
@@ -12,26 +10,40 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Team.belongsTo(models.League);
       Team.belongsTo(models.User);
-      Team.hasMany(models.Match);
+      Team.belongsTo(models.League, { foreignKey: "LeagueId" });
+      Team.belongsToMany(models.Match, {
+        through: models.TeamMatch,
+        foreignKey: "TeamId",
+        otherKey: "MatchId",
+      });
     }
   }
-  Team.init({
-    name: DataTypes.STRING,
-    shortname: DataTypes.STRING,
-    logo: DataTypes.STRING,
-    status: DataTypes.STRING,
-    UserId: DataTypes.UUID,
-    LeagueId: DataTypes.UUID,
-  }, {
-    hooks: {
-      beforeCreate: (team, options) => {
-        team.id = uuidv4();
+  Team.init(
+    {
+      name: DataTypes.STRING,
+      shortname: DataTypes.STRING,
+      logo: DataTypes.STRING,
+      status: DataTypes.STRING,
+      LeagueId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: "Leagues",
+          key: "id",
+        },
       },
+      UserId: DataTypes.UUID,
     },
-    sequelize,
-    modelName: 'Team',
-  });
+    {
+      hooks: {
+        beforeCreate: (team, options) => {
+          team.id = uuidv4();
+        },
+      },
+      sequelize,
+      modelName: "Team",
+    }
+  );
   return Team;
 };

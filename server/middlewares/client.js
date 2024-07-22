@@ -5,8 +5,8 @@
 
 // module.exports = client
 
-const { Client } = require('redis-om');
-const { createClient } = require('redis');
+const { Client } = require("redis-om");
+const { createClient } = require("redis");
 
 const url = process.env.REDIS_URL;
 

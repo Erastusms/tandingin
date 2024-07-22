@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const ListLeagueSchema = Joi.object({
   page: Joi.number().integer().optional(),

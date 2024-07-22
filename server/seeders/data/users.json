@@ -1,0 +1,34 @@
+[
+    {
+        "fullname": "Bambang Pamungkas",
+        "username": "bepe20",
+        "email": "bepe20@gmail.com",
+        "password": "admin123",
+        "reTypePassword": "admin123",
+        "role": "MEMBER"
+    },
+    {
+        "fullname": "Bukan admin biasa",
+        "username": "notadmin",
+        "email": "notadmin@gmail.com",
+        "password": "admin123",
+        "reTypePassword": "admin123",
+        "role": "MEMBER"
+    },
+    {
+        "fullname": "Orang AOP",
+        "username": "aophunter",
+        "email": "aophunter@gmail.com",
+        "password": "aophunter",
+        "reTypePassword": "aophunter",
+        "role": "MEMBER"
+    },
+    {
+        "fullname": "Admin",
+        "username": "admin",
+        "email": "admintandingin@gmail.com",
+        "password": "adminaop",
+        "reTypePassword": "adminaop",
+        "role": "ADMIN"
+    }
+]

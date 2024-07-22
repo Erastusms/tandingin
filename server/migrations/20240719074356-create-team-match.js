@@ -1,21 +1,28 @@
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Matches", {
+    await queryInterface.createTable("TeamMatches", {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
-        allowNull: false,
-        unique: true,
       },
-      match_date: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      LeagueId: {
+      TeamId: {
         type: Sequelize.UUID,
-        allowNull: true,
+        allowNull: false,
+      },
+      MatchId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+      },
+      score: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      category: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -28,6 +35,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Matches");
+    await queryInterface.dropTable("TeamMatches");
   },
 };

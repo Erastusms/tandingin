@@ -8,21 +8,21 @@ const generateFixture = (array, LeagueId) => {
       for (let last = 0; last < array[day][j].length; last++) {
         matches.name = `MatchDay ${day + 1 + k}`;
         matches.LeagueId = LeagueId;
-        matches.status = 'Not Played';
+        matches.status = "Not Played";
         matches.TeamId = array[day][j][last];
-        matches.status = 'Not Played';
+        matches.status = "Not Played";
         fixtureArray.push(matches);
         matches = {};
       }
-      k++;
+      k += 1;
     }
-    k--;
+    k -= 1;
   }
   return fixtureArray;
 };
 
 const generateMatchDay = (fixtureArray, fixtures) => {
-  const category = ['home', 'away'];
+  const category = ["home", "away"];
   let k = 0;
 
   for (let fix = 0; fix < fixtures.length; fix++) {
@@ -30,12 +30,13 @@ const generateMatchDay = (fixtureArray, fixtures) => {
       fixtureArray[index + fix + k].FixtureId = fixtures[fix].id;
       fixtureArray[index + fix + k].category = category[index];
     }
-    k++;
+    k += 1;
   }
 
   return fixtureArray.map(({ name, LeagueId, ...rest }) => ({ ...rest }));
 };
 
 module.exports = {
-  generateFixture, generateMatchDay
+  generateFixture,
+  generateMatchDay,
 };

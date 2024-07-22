@@ -1,4 +1,4 @@
-const multer = require('multer');
+const multer = require("multer");
 
 const MulterSingle = (dest) => {
   const storage = multer.diskStorage({
@@ -21,7 +21,7 @@ const MulterSingle = (dest) => {
     storage,
   });
 
-  return upload.single('file');
+  return upload.single("file");
 };
 
 module.exports = { MulterSingle };

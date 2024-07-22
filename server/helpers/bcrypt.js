@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 const saltRound = +process.env.SALT_ROUND || 7;
 

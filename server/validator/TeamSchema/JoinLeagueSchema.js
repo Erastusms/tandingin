@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const JoinLeagueSchema = Joi.object({
   LeagueId: Joi.string().required(),
