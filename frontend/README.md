@@ -1,10 +1,30 @@
 # Run APP
 
-## `npm install`
-
+```bash
+npm install
+```
 ## Available Scripts
+
+Change API_URL  
+
+```javascript
+
+./src/services/auth.service.js
+
+const API_URL = "http://yourlocalhost/api/v1/";
+
+ ./src/services/user.srevice.js
+
+const API_URL = "http://yourlocalhost/api/v1/";
+const API_ALL = "http://yourlocalhost/";
+
+
+```
+
 
 In the project directory, you can run:
 
-### `npm start`
+```bash
+npm start
+```
 

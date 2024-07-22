@@ -24,6 +24,10 @@ import AdminCompetition from './PageAdmin/AdminCompetition';
 import AdminProfile from './PageAdmin/AdminProfile';
 import LeagueDetails from './PageAdmin/LeagueDetails';
 import MemberRoot from './PageMember/MemberRoot';
+import ErrorDashboard from './pages/ErrorDashboard';
+import Competition from './PageMember/Competition';
+
+import ProtectedRoute from './ProtectedRoute';
 
 
 
@@ -54,7 +58,12 @@ const router = createBrowserRouter([
   },
   {
     path:'/admin',
-    element: <AdminRoot/> ,
+    element: 
+    (
+    <ProtectedRoute>
+      <AdminRoot/>
+    </ProtectedRoute>
+    ) ,
     errorElement:<Error/>,
     children: [
       {path:'/admin/dashboard', element:<DashboardAdmin/>},
@@ -70,14 +79,27 @@ const router = createBrowserRouter([
   },
   {
     path:'/member',
-    element: <MemberRoot/> ,
-    errorElement:<Error/>,
+    element: (
+    <ProtectedRoute>
+    <MemberRoot/>
+    </ProtectedRoute>
+    ) ,
+    errorElement:<ErrorDashboard/>,
     children: [
-      {path:'/member/dashboard', element:<MemberCompetition/>},
-      // {path:'/admin/dashboard/:id', element:<LeagueDetails/>},
-      // {path:'/admin/mycompetition',element:<AdminCompetition/>},
-      // {path:'/admin/member_and_league',element:<MemberCompetition/>},
-      // {path:'/admin/profile',element:<AdminProfile/>},
+      {path:'/member/dashboard', element:(
+      
+      <MemberCompetition/>
+      
+    )},
+      {path:'/member/competition', element:
+      (
+
+          <Competition/>
+
+      )
+      
+      },
+
       {
         
       }

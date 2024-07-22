@@ -17,6 +17,8 @@ function Sidenav() {
 
 
       { name: 'Dashboard', href: '/member/dashboard', current: true ,logoMenu :<HiChartPie />},
+      { name: 'Competition', href: '/member/competition', current: true ,logoMenu :<HiChartPie />},
+
       // { name: 'My Competition', href: '/admin/mycompetition', current: false ,logoMenu :<HiClipboardList  />} ,
       // { name: 'Member & Competition', href: '/admin/member_and_league', current: false, logoMenu :<HiOutlineTable /> },
       // { name: 'Sign Out', href: '/logout', current: false ,logoMenu :<HiArrowSmRight />},

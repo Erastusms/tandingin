@@ -6,10 +6,10 @@ import { useSelector } from "react-redux";
 
 function DashboardAdmin() {
   const [content, setContent] = useState([]);
-  const { user: currentUser } = useSelector((state) => state.auth);
+ // const { user: currentUser } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    UserService.getPublicContent().then(
+    UserService.getPublicContent(10,10).then(
       (response) => {
         setContent(response.data);
         console.log(response.data);
@@ -25,9 +25,9 @@ function DashboardAdmin() {
     );
   }, []);
 
-  if (!currentUser) {
-    return <Navigate to="/login" />;
-  }
+  // if (!currentUser) {
+  //   return <Navigate to="/login" />;
+  // }
   return (
 
     <div class="p-4 sm:ml-64">
@@ -38,7 +38,7 @@ function DashboardAdmin() {
         <Link to={`/admin/dashboard/${e.id}`}>
           <div class="flex items-center justify-center ">
           
-      <Card className=" md:w-full" imgSrc={`http://tandingin-production.up.railway.app/${e.logo}`}  key={e.id} horizontal>
+      <Card className=" md:w-full" imgSrc={`http://localhost:5000/${e.logo}`}  key={e.id} horizontal>
       <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
       {e.name}
       </h5>
