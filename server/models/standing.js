@@ -12,13 +12,14 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Standing.belongsTo(models.Team, { foreignKey: "TeamId" });
+      Standing.belongsTo(models.League, { foreignKey: "LeagueId" });
     }
   }
   Standing.init(
     {
       TeamId: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: "Teams",
           key: "id",
@@ -32,11 +33,24 @@ module.exports = (sequelize, DataTypes) => {
       goals_against: DataTypes.INTEGER,
       goal_difference: DataTypes.INTEGER,
       points: DataTypes.INTEGER,
+      LeagueId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "League",
+          key: "id",
+        },
+      },
     },
     {
       hooks: {
         beforeCreate: (standing, options) => {
           standing.id = uuidv4();
+        },
+        beforeBulkCreate: (standing, options) => {
+          return standing.map((stand) => {
+            stand.id = uuidv4();
+          });
         },
       },
       sequelize,

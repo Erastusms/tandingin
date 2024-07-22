@@ -2,7 +2,7 @@ const robin = require("roundrobin");
 // const _ = require('lodash');
 const fs = require("fs");
 const path = require("path");
-const { League, User, Team, Match, TeamMatch } = require("../models");
+const { League, User, Team, Match, TeamMatch, Standing } = require("../models");
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
@@ -290,6 +290,10 @@ class AdminController {
       const matches = [];
       const teamIds = allTeams.map((team) => team.id);
 
+      for (const idTeam in teamIds) {
+        await Standing.create({ TeamId: teamIds[idTeam], LeagueId: id });
+      }
+
       // Generate round-robin schedule
       for (let i = 0; i < teamIds.length; i++) {
         for (let j = i + 1; j < teamIds.length; j++) {
@@ -331,7 +335,7 @@ class AdminController {
         });
       }
 
-      return successResponse(res, "Generate fixture success", 200, matches);
+      return successResponse(res, "Generate Match Success", 200, matches);
     } catch (err) {
       return next(err);
     }
