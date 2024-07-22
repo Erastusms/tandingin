@@ -38,11 +38,6 @@ AdminRouter.put(
 );
 AdminRouter.get("/league/detail/:LeagueId", adminController.viewDetailLeague);
 AdminRouter.get(
-  "/league/list/all",
-  validator(ListLeagueSchema, "query"),
-  adminController.viewListLeague
-);
-AdminRouter.get(
   "/league/list",
   validator(ListSchema, "query"),
   adminController.viewListTeamInLeague
@@ -62,10 +57,6 @@ AdminRouter.get(
   "/league/match/generate/:leagueId",
   checkAuth("admin"),
   adminController.generateMatch
-);
-AdminRouter.get(
-  "/league/match/show/:leagueId",
-  adminController.viewMatchInLeague
 );
 AdminRouter.put(
   "/league/match/score/:leagueId",

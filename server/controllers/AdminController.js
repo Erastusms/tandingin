@@ -14,7 +14,7 @@ const {
   generateMatchDay,
 } = require("../helpers/fixtureGenerator");
 const { where } = require("sequelize");
-// const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 
 // const redisClient = require("../middlewares/redis");
 
@@ -120,52 +120,6 @@ class AdminController {
     }
   }
 
-  static async viewListLeague(req, res, next) {
-    const { page = 1, pageSize = 4 } = req.query;
-    const limit = +page;
-    const offset = +pageSize;
-    const startIndex = (limit - 1) * offset;
-    const endIndex = limit * offset;
-
-    try {
-      // const cacheData = await redisClient.get("leagues-data");
-
-      // if (cacheData) {
-      //   const dataJSON = JSON.parse(cacheData);
-      //   const leaguesData = dataJSON.slice(startIndex, endIndex);
-
-      //   return successResponse(res, "League list success", 200, {
-      //     isCache: true,
-      //     page: limit,
-      //     pageSize: offset,
-      //     totalData: leaguesData.length,
-      //     leaguesData
-      //   });
-      // }
-
-      const leagues = await League.findAll({
-        // offset: (limit - 1) * offset,
-        // limit: offset,
-        order: [["createdAt", "DESC"]],
-      });
-      const leaguesData = leagues.map((liga) =>
-        convertObjectToCamelCase(liga.dataValues)
-      );
-
-      // await redisClient.set("leagues-data", JSON.stringify(leaguesData));
-
-      return successResponse(res, "League list success", 200, {
-        isCache: false,
-        page: limit,
-        pageSize: offset,
-        totalData: leaguesData.slice(startIndex, endIndex).length,
-        leaguesData,
-      });
-    } catch (err) {
-      return next(err);
-    }
-  }
-
   static async viewListTeamInLeague(req, res, next) {
     try {
       const { LeagueId, status } = req.query;
@@ -185,12 +139,11 @@ class AdminController {
         }
       );
 
-      return successResponse(
-        res,
-        "League list success",
-        200,
-        convertObjectToCamelCase(leaguesData.dataValues)
-      );
+      const resData = leaguesData
+        ? convertObjectToCamelCase(leaguesData.dataValues)
+        : [];
+
+      return successResponse(res, "League list success", 200, resData);
     } catch (err) {
       return next(err);
     }
