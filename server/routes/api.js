@@ -8,6 +8,7 @@ const {
   UpdateUserSchema,
   SearchSchema,
 } = require("../validator/UserSchema");
+const { ListLeagueSchema } = require("../validator/LeagueSchema");
 // const { MulterSingle } = require("../middlewares/multer");
 
 ApiRouter.post(
@@ -31,6 +32,15 @@ ApiRouter.get(
   "/search",
   validator(SearchSchema, "query"),
   userController.search
+);
+ApiRouter.get(
+  "/league/match/show/:leagueId",
+  userController.viewMatchInLeague
+);
+ApiRouter.get(
+  "/league/list/all",
+  validator(ListLeagueSchema, "query"),
+  userController.viewListLeague
 );
 
 ApiRouter.get("/get", userController.getUser);
