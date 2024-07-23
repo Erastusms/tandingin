@@ -21,7 +21,7 @@ const required = (value) => {
 
 function Login() {
 
-    let navigate = useNavigate();
+  let navigate = useNavigate();
 
   const form = useRef();
   const checkBtn = useRef();
@@ -55,10 +55,16 @@ function Login() {
     if (checkBtn.current.context._errors.length === 0) {
       dispatch(login(email, password))
         .then((data) => {
-          console.log(data);
-          navigate("/admin/dashboard");
-          window.location.reload();
-        })
+          //console.log(data);
+          if (data.role === "MEMBER"){
+            navigate("/member/dashboard");
+            window.location.reload();
+          }else{
+            navigate("/admin/dashboard");
+            window.location.reload();
+          }
+          
+        })  
         .catch(() => {
           setLoading(false);
         })

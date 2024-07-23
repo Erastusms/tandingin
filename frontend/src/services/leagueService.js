@@ -6,12 +6,15 @@ const create = data => {
   const remove = id => {
     return http.delete(`/admin/league/${id}`);
   };
+ const update= (id, data) => {
+    return http.put(`/admin/league/${id}`, data);
+  };
 
 const leagueService = {
     // getAll,
     // get,
     create,
-    // update,
+    update,
     remove,
     // removeAll,
     // findByTitle

@@ -1,6 +1,7 @@
 import {
     CREATE_LEAGUE,
-    DELETE_LEAGUE
+    DELETE_LEAGUE,
+    UPDATE_LEAGUE,
 
   } from "../actions/types";
 
@@ -12,6 +13,17 @@ import {
     switch (type) {
         case CREATE_LEAGUE:
           return [...league, payload];
+          case UPDATE_LEAGUE:
+            return league.map((league) => {     
+              if (league.id === payload.id) {
+                return {
+                  ...league,
+                  ...payload,
+                };
+              } else {
+                return league;
+              }
+            });
         case DELETE_LEAGUE:
             return league.filter(({ id }) => id !== payload.id);
           default:
@@ -19,5 +31,4 @@ import {
         }
       };
 
-
-      export default leagueReducer;
+export default leagueReducer;
