@@ -2,7 +2,15 @@ const robin = require("roundrobin");
 // const _ = require('lodash');
 const fs = require("fs");
 const path = require("path");
-const { League, User, Team, Match, TeamMatch, Standing } = require("../models");
+const {
+  League,
+  User,
+  Team,
+  Match,
+  TeamMatch,
+  Standing,
+  sequelize,
+} = require("../models");
 const {
   convertObjectToSnakeCase,
   convertObjectToCamelCase,
@@ -380,48 +388,71 @@ class AdminController {
   }
 
   static async updateScore(req, res, next) {
-    let teamAStatus = "draw";
-    let teamBStatus = "draw";
     const UserId = req.userData.id;
-    const { fixturesId, teamAId, teamBId, teamAScore, teamBScore } = req.body;
+    const { matchId, teamAId, teamBId, teamAScore, teamBScore } = req.body;
+    const timDetail = [
+      {
+        TeamId: teamAId,
+        score: teamAScore,
+        point: 0,
+      },
+      {
+        TeamId: teamBId,
+        score: teamBScore,
+        point: 0,
+      },
+    ];
+
     try {
+      const isMatchExist = await Match.findOne({ where: { id: matchId } });
+      if (!isMatchExist) {
+        return res.status(401).json({ message: "This Match doesnt exist" });
+      }
+
       const isUserIdAuthorized = await League.findOne({ where: { UserId } });
       if (!isUserIdAuthorized) {
         return res.status(401).json({ message: "You are not authorized!" });
       }
 
-      if (teamAScore > teamBScore) {
-        teamAStatus = "win";
-        teamBStatus = "lose";
-      }
-      if (teamAScore < teamBScore) {
-        teamAStatus = "lose";
-        teamBStatus = "win";
-      }
+      for (let i = 0; i < timDetail.length; i++) {
+        let { TeamId, score, point } = timDetail[i];
+        let statsTeam = {};
+        statsTeam.played = sequelize.literal("played + 1");
 
-      await Promise.all([
-        Fixture.update(
-          {
-            status: "FullTime",
-          },
-          { where: { id: fixturesId } }
-        ),
-        Match.update(
-          {
-            score: teamAScore,
-            status: teamAStatus,
-          },
-          { where: { FixtureId: fixturesId, TeamId: teamAId } }
-        ),
-        Match.update(
-          {
-            score: teamBScore,
-            status: teamBStatus,
-          },
-          { where: { FixtureId: fixturesId, TeamId: teamBId } }
-        ),
-      ]);
+        await TeamMatch.update(
+          { score: score },
+          { where: { TeamId: TeamId, MatchId: matchId } }
+        );
 
+        const incrementIndex = i === 0 ? i + 1 : i - 1;
+        const enemyScore = timDetail[incrementIndex].score;
+
+        const goalDiff = score - enemyScore;
+        if (score > enemyScore) {
+          point = 3;
+          statsTeam.won = sequelize.literal("won + 1");
+        }
+        if (score < enemyScore) {
+          point = 0;
+          statsTeam.lost = sequelize.literal("lost + 1");
+        }
+        if (score === enemyScore) {
+          point = 1;
+          statsTeam.drawn = sequelize.literal("drawn + 1");
+        }
+
+        statsTeam.goals_for = sequelize.literal(`"goals_for" + ${score}`);
+        statsTeam.goals_against = sequelize.literal(
+          `"goals_against" + ${enemyScore}`
+        );
+        statsTeam.goal_difference = sequelize.literal(
+          `"goal_difference" + ${goalDiff}`
+        );
+        statsTeam.points = sequelize.literal(`"points" + ${point}`);
+
+        await Standing.update(statsTeam, { where: { TeamId: TeamId } });
+        statsTeam = {};
+      }
       return successResponse(res, "Score has been updated");
     } catch (err) {
       return next(err);

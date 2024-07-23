@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { User, League, Team, Match } = require("../models");
+const { User, League, Team, Match, Standing } = require("../models");
 const { decrypter, encrypter } = require("../helpers/bcrypt");
 const { tokenGenerator } = require("../helpers/jwt");
 const {
@@ -231,7 +231,9 @@ class UserController {
 
       const matchData = matches.map((match) => ({
         matchDate: match.matchDate,
+        matchId: match.id,
         teams: match.Teams.map((team) => ({
+          teamId: team.id,
           teamName: team.name,
           score: team.TeamMatch.score,
           category: team.TeamMatch.category,
@@ -268,8 +270,8 @@ class UserController {
       // }
 
       const leagues = await League.findAll({
-        // offset: (limit - 1) * offset,
-        // limit: offset,
+        offset: (limit - 1) * offset,
+        limit: offset,
         order: [["createdAt", "DESC"]],
       });
       const leaguesData = leagues.map((liga) =>
@@ -284,6 +286,66 @@ class UserController {
         pageSize: offset,
         totalData: leaguesData.slice(startIndex, endIndex).length,
         leaguesData,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async showStanding(req, res, next) {
+    // const { page = 1, pageSize = 4 } = req.params;
+    // const limit = +page;
+    // const offset = +pageSize;
+    // const startIndex = (limit - 1) * offset;
+    // const endIndex = limit * offset;
+
+    try {
+      // const cacheData = await redisClient.get("leagues-data");
+
+      // if (cacheData) {
+      //   const dataJSON = JSON.parse(cacheData);
+      //   const leaguesData = dataJSON.slice(startIndex, endIndex);
+
+      //   return successResponse(res, "League list success", 200, {
+      //     isCache: true,
+      //     page: limit,
+      //     pageSize: offset,
+      //     totalData: leaguesData.length,
+      //     leaguesData
+      //   });
+      // }
+
+      const standing = await Standing.findAll({
+        // offset: (limit - 1) * offset,
+        // limit: offset,
+        where: {
+          LeagueId: req.params.LeagueId,
+        },
+        order: [
+          ["points", "DESC"],
+          ["goal_difference", "DESC"],
+        ],
+      });
+      // const leagues = await League.findAll({
+      //   where: {
+      //     UserId: req.userData.id,
+      //   },
+      //   offset: (page - 1) * pageSize,
+      //   limit: pageSize,
+      //   order: [["createdAt", "DESC"]],
+      // });
+      // const leaguesData = leagues.map((liga) =>
+      //   convertObjectToCamelCase(liga.dataValues)
+      // );
+
+      // await redisClient.set("leagues-data", JSON.stringify(leaguesData));
+
+      return successResponse(res, "League list success", 200, {
+        // isCache: false,
+        // page: limit,
+        // pageSize: offset,
+        // totalData: leaguesData.slice(startIndex, endIndex).length,
+        standing,
       });
     } catch (err) {
       return next(err);

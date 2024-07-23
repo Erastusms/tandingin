@@ -42,6 +42,11 @@ ApiRouter.get(
   validator(ListLeagueSchema, "query"),
   userController.viewListLeague
 );
+ApiRouter.get(
+  "/league/standing/:LeagueId",
+  // validator(ListLeagueSchema, "query"),
+  userController.showStanding
+);
 
 ApiRouter.get("/get", userController.getUser);
 
