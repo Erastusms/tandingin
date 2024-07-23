@@ -250,8 +250,6 @@ class UserController {
     const { page = 1, pageSize = 4 } = req.query;
     const limit = +page;
     const offset = +pageSize;
-    const startIndex = (limit - 1) * offset;
-    const endIndex = limit * offset;
 
     try {
       // const cacheData = await redisClient.get("leagues-data");
@@ -270,12 +268,16 @@ class UserController {
       // }
 
       const leagues = await League.findAll({
-        offset: (limit - 1) * offset,
-        limit: offset,
         order: [["createdAt", "DESC"]],
       });
       const leaguesData = leagues.map((liga) =>
         convertObjectToCamelCase(liga.dataValues)
+      );
+
+      const offsetFinal = (limit - 1) * offset;
+      const paginatedData = leaguesData.slice(
+        offsetFinal,
+        offsetFinal + offset
       );
 
       // await redisClient.set("leagues-data", JSON.stringify(leaguesData));
@@ -284,8 +286,8 @@ class UserController {
         isCache: false,
         page: limit,
         pageSize: offset,
-        totalData: leaguesData.slice(startIndex, endIndex).length,
-        leaguesData,
+        totalData: leagues.length,
+        leaguesData: paginatedData,
       });
     } catch (err) {
       return next(err);
@@ -293,31 +295,8 @@ class UserController {
   }
 
   static async showStanding(req, res, next) {
-    // const { page = 1, pageSize = 4 } = req.params;
-    // const limit = +page;
-    // const offset = +pageSize;
-    // const startIndex = (limit - 1) * offset;
-    // const endIndex = limit * offset;
-
     try {
-      // const cacheData = await redisClient.get("leagues-data");
-
-      // if (cacheData) {
-      //   const dataJSON = JSON.parse(cacheData);
-      //   const leaguesData = dataJSON.slice(startIndex, endIndex);
-
-      //   return successResponse(res, "League list success", 200, {
-      //     isCache: true,
-      //     page: limit,
-      //     pageSize: offset,
-      //     totalData: leaguesData.length,
-      //     leaguesData
-      //   });
-      // }
-
       const standing = await Standing.findAll({
-        // offset: (limit - 1) * offset,
-        // limit: offset,
         where: {
           LeagueId: req.params.LeagueId,
         },
@@ -326,17 +305,6 @@ class UserController {
           ["goal_difference", "DESC"],
         ],
       });
-      // const leagues = await League.findAll({
-      //   where: {
-      //     UserId: req.userData.id,
-      //   },
-      //   offset: (page - 1) * pageSize,
-      //   limit: pageSize,
-      //   order: [["createdAt", "DESC"]],
-      // });
-      // const leaguesData = leagues.map((liga) =>
-      //   convertObjectToCamelCase(liga.dataValues)
-      // );
 
       // await redisClient.set("leagues-data", JSON.stringify(leaguesData));
 
